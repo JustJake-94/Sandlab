@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sand Lab</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap">
+<style>
+:root{--card:rgba(7,30,24,.72);--ink:#d8fff0;--mut:#78b8a0;--line:#145040;--acc:#2cf07a;--ok:#2cf07a;--warn:#ffb020}
+*{box-sizing:border-box}[hidden]{display:none!important}
+html{font-size:min(1vw,1.7778vh);height:100%}
+body{margin:0;height:100vh;overflow:hidden;color:var(--ink);font-family:"Share Tech Mono",ui-monospace,Menlo,Consolas,monospace;line-height:1.3;-webkit-user-select:none;user-select:none;
+ padding:.8rem;padding-top:calc(.8rem + env(safe-area-inset-top,0px));padding-bottom:calc(.8rem + env(safe-area-inset-bottom,0px));display:grid;grid-template-rows:auto minmax(0,1fr);gap:.8rem;
+ background:radial-gradient(60rem 30rem at 88% -5%,rgba(255,60,120,.10),transparent 60%),radial-gradient(60rem 36rem at 15% 0,rgba(44,240,122,.09),transparent 60%),linear-gradient(rgba(44,240,122,.045) 1px,transparent 1px) 0 0/2.4rem 2.4rem,linear-gradient(90deg,rgba(44,240,122,.045) 1px,transparent 1px) 0 0/2.4rem 2.4rem,#020d0b}
+h2,.btn,.pi i,.logo,.mt,#mprog,.tag{font-family:Orbitron,"Segoe UI",system-ui,sans-serif}
+h2{margin:0;color:#1fd1b0;letter-spacing:.22em;font-size:.75rem;font-weight:500;text-transform:uppercase}
+.panel,.mission,.tpanel{border:1px solid var(--line);background:var(--card)}
+/* mission */
+.mission{padding:.6rem 1rem;display:grid;gap:.5rem;box-shadow:inset 0 0 50px rgba(44,240,122,.05)}
+.mtop{display:flex;align-items:center;gap:1rem}
+.logo{display:flex;align-items:center;gap:.6rem;font-weight:900;font-size:1.5rem;letter-spacing:.08em;white-space:nowrap;filter:drop-shadow(0 0 12px rgba(44,240,122,.5))}
+.logo .g{color:var(--acc)}
+.orb{width:1rem;height:1rem;border-radius:50%;background:radial-gradient(circle at 35% 30%,#b9ffd6,#2cf07a 55%,#0d7a3f);box-shadow:0 0 14px #2cf07a;display:inline-block}
+#mparts{display:flex;gap:.4rem;flex:1;min-width:0}
+#mparts .btn{flex:1;padding:.6rem .4rem;font-size:.62rem;letter-spacing:.04em;white-space:nowrap}
+#mprog{color:var(--acc);font-size:.8rem;white-space:nowrap}
+#mdet{display:grid;grid-template-columns:22% minmax(0,1fr) auto;gap:1.2rem;align-items:center}
+.mt{font-size:1.15rem;color:var(--acc)}.mdesc{color:var(--mut);font-size:.8rem}
+.req{font-size:.9rem;color:var(--mut)}.req.ok{color:var(--ok);text-shadow:0 0 10px rgba(44,240,122,.4)}
+.tip{color:var(--mut);font-size:.75rem}
+.st{font-size:.8rem}.st.ok{color:var(--ok)}.st.w{color:var(--warn)}
+/* buttons */
+.btn{font-weight:700;text-transform:uppercase;letter-spacing:.1em;font-size:.72rem;border:0;border-radius:0;background:#0b3025;color:var(--acc);clip-path:polygon(7% 0,100% 0,93% 100%,0 100%);padding:.8rem 1.4rem;min-height:2.8rem;cursor:pointer}
+.btn:hover{background:#0f4234}.btn.on{background:var(--acc);color:#02130d}.btn:disabled{opacity:.3;cursor:not-allowed}
+.row{display:flex;gap:.5rem;align-items:center;justify-content:center}
+/* main */
+main{display:grid;grid-template-columns:27rem minmax(0,1fr);gap:.8rem;min-height:0}
+.elem{display:flex;flex-direction:column;gap:.5rem;padding:.8rem;min-height:0}
+#nuc{flex:1 1 0;min-height:0;width:100%;overflow:visible;touch-action:none;filter:drop-shadow(0 0 14px rgba(44,240,122,.35))}
+#eInfo{text-align:center;font-size:.85rem}#eInfo b{font-size:1.2rem;color:var(--acc);font-family:Orbitron,sans-serif}
+.pchip{display:flex;align-items:center;gap:.6rem;padding:.4rem .9rem;border:1px solid var(--line);background:var(--card);cursor:grab;touch-action:none}
+.pchip i{width:2.6rem;height:2.6rem;line-height:2.6rem;border-radius:50%;background:#f87171;color:#fff;text-align:center;font-style:normal;font-weight:800;font-size:1.4rem}
+.pchip small{font-size:.7rem;color:var(--mut)}
+.lab{display:grid;grid-template-columns:minmax(0,1fr) 20rem;gap:.8rem;min-height:0}
+.labL,.tools{display:flex;flex-direction:column;gap:.5rem;min-height:0}
+#ws{flex:1 1 0;min-height:0;width:100%;background:var(--card);border:1px solid var(--line);box-shadow:inset 0 0 60px rgba(44,240,122,.06);touch-action:none;overflow:visible}
+#ws text{pointer-events:none;font-family:Orbitron,sans-serif;font-weight:800;text-anchor:middle;dominant-baseline:central}
+.atom{cursor:grab}.bond{stroke:var(--ink);stroke-width:6;stroke-linecap:round;opacity:.75;pointer-events:none}
+.hit{stroke:transparent;stroke-width:44;cursor:pointer;pointer-events:stroke}
+.open{stroke:var(--warn);stroke-width:3;stroke-dasharray:5 4;fill:none}.tgt{stroke:var(--ok);stroke-width:4;fill:none}
+#info{display:flex;flex-direction:column;gap:.35rem;height:9.5rem;overflow:hidden}
+.frag{border:1px solid var(--line);background:var(--card);padding:.35rem .8rem;display:flex;gap:.7rem;align-items:baseline;flex-wrap:wrap}
+.frag b{font-family:Orbitron,sans-serif;color:var(--acc);font-size:1.1rem;text-shadow:0 0 12px rgba(44,240,122,.5)}.frag span{color:var(--mut);font-size:.8rem}
+/* tools */
+.tabs{display:flex;gap:.4rem}.tabs .btn{flex:1;padding:.6rem .3rem}
+.tpanel{flex:1;min-height:0;overflow:auto;padding:.6rem;scrollbar-width:none}
+#pal{display:grid;grid-template-columns:repeat(5,1fr);gap:.4rem;align-content:start}
+.pi{text-align:center;background:var(--card);border:1px solid var(--line);padding:.35rem 0;cursor:grab;touch-action:none}
+.pi:hover{border-color:var(--acc);box-shadow:0 0 14px rgba(44,240,122,.3)}
+.pi i{display:block;width:2.8rem;height:2.8rem;line-height:2.8rem;border-radius:50%;margin:0 auto;box-shadow:inset -5px -5px 8px rgba(0,0,0,.25);font-style:normal;font-weight:800;font-size:.95rem}
+#ex,#al{display:grid;grid-template-columns:1fr 1fr;gap:.4rem;align-content:start}
+#ex .btn,#al .btn{padding:.5rem .3rem;font-size:.6rem}
+.steps{display:flex;gap:.5rem;align-items:stretch}
+.step{flex:1;border:1px solid var(--line);background:rgba(2,13,11,.5);padding:.4rem .7rem;font-size:.78rem;color:var(--mut);display:flex;gap:.6rem;align-items:center}
+.step b{font-family:Orbitron,sans-serif;color:var(--acc);font-size:.85rem}
+.step.ok{color:var(--ok);border-color:var(--ok)}
+#fab{position:fixed;inset:0;z-index:200;background:rgba(2,13,11,.88);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center}
+.fbox{width:34rem;text-align:center;padding:2rem;border:1px solid var(--acc);background:rgba(7,30,24,.92);box-shadow:0 0 60px rgba(44,240,122,.25)}
+.fwrap{position:relative;width:12rem;height:12rem;margin:0 auto 1rem;display:flex;align-items:center;justify-content:center}
+.fring{position:absolute;inset:0;border:2px dashed var(--acc);border-radius:50%;animation:spin 6s linear infinite}
+.fring2{inset:1.2rem;border-color:#1fd1b0;animation-direction:reverse;animation-duration:4s}
+#fIcon{font-size:5.5rem;line-height:1}
+.ftitle{font-family:Orbitron,sans-serif;font-size:1.5rem;color:var(--acc);letter-spacing:.06em}
+.fstage{color:var(--mut);margin:.5rem 0 1rem;min-height:1.4rem}
+.fbar{height:1.6rem;border:1px solid var(--line);background:#02130d;position:relative}
+.fbar::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 calc(10% - 3px),#02130d calc(10% - 3px) 10%)}
+#fFill{height:100%;width:0;background:linear-gradient(90deg,#1fd1b0,#2cf07a);box-shadow:0 0 16px rgba(44,240,122,.7)}
+.fpct{font-family:Orbitron,sans-serif;color:var(--acc);margin-top:.5rem}
+.fbox.err{border-color:#ff4d5e;box-shadow:0 0 60px rgba(255,77,94,.35)}
+.fbox.err #fIcon{animation:glitch .4s steps(2) infinite}
+@keyframes glitch{0%,100%{transform:translate(0)}20%{transform:translate(-5px,2px)}40%{transform:translate(5px,-2px)}60%{transform:translate(-3px,-3px)}80%{transform:translate(4px,3px)}}
+.screen{position:fixed;inset:0;z-index:300;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.3rem;text-align:center;background:radial-gradient(60rem 30rem at 88% -5%,rgba(255,60,120,.10),transparent 60%),radial-gradient(60rem 36rem at 15% 0,rgba(44,240,122,.12),transparent 60%),linear-gradient(rgba(44,240,122,.045) 1px,transparent 1px) 0 0/2.4rem 2.4rem,linear-gradient(90deg,rgba(44,240,122,.045) 1px,transparent 1px) 0 0/2.4rem 2.4rem,#020d0b}
+.logoSvg{width:14rem;height:14rem;filter:drop-shadow(0 0 22px rgba(44,240,122,.45))}
+.spinA{transform-origin:100px 100px;animation:spin 14s linear infinite}
+.bigt{font-family:Orbitron,sans-serif;font-weight:900;font-size:4.2rem;letter-spacing:.08em;text-transform:uppercase;line-height:1;filter:drop-shadow(0 0 20px rgba(44,240,122,.5));background:repeating-linear-gradient(0deg,transparent 0 .45rem,rgba(2,13,11,.5) .45rem .5rem),linear-gradient(#e8fff3,#e8fff3);-webkit-background-clip:text;background-clip:text;color:transparent}
+.bigt span{background:repeating-linear-gradient(0deg,transparent 0 .45rem,rgba(2,13,11,.5) .45rem .5rem),linear-gradient(#2cf07a,#2cf07a);-webkit-background-clip:text;background-clip:text}
+.subt{color:var(--mut);font-size:1.1rem;max-width:40rem}
+.btn.big{font-size:1rem;padding:1.1rem 3rem;min-height:3.8rem}
+.hbox{width:48rem;display:flex;flex-direction:column;gap:.8rem}
+.hstats{display:flex;gap:1rem}.hstat{flex:1;border:1px solid var(--line);background:var(--card);padding:.6rem 1rem;color:var(--mut);font-size:.85rem}
+.hstat b{display:block;font-family:Orbitron,sans-serif;font-size:1.8rem;color:var(--acc)}
+.hrow{display:flex;align-items:center;gap:1rem;border:1px solid var(--line);background:var(--card);padding:.45rem 1rem;font-size:.95rem}
+.hrow .hi{font-size:1.5rem}.hrow b{font-family:Orbitron,sans-serif;color:var(--acc);flex:1;text-align:left}.hrow .ht{color:var(--mut);font-size:.8rem}
+.hbox{width:86rem}
+.hgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:1rem}
+.hcard{border:1px solid var(--line);background:var(--card);padding:.8rem;color:var(--ink);font:inherit;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:.3rem}
+.hcard:hover{border-color:var(--acc);box-shadow:0 0 18px rgba(44,240,122,.3)}
+.hcard .hpic{width:7rem;height:7rem}.hcard b{font-family:Orbitron,sans-serif;color:var(--acc);font-size:.95rem}.hcard span{color:var(--mut);font-size:.75rem}
+.hcard.dim{opacity:.55}.hcard.dim .hpic{filter:grayscale(1)}
+.pic{width:100%;height:100%;fill:rgba(44,240,122,.1);stroke:#2cf07a;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.ibox{width:76rem;display:flex;gap:3rem;align-items:center;text-align:left}
+.ipic{width:20rem;height:20rem;flex:none;border:1px solid var(--line);background:var(--card);padding:2.5rem;box-shadow:inset 0 0 50px rgba(44,240,122,.08)}
+.itext{flex:1}.bigt2{font-family:Orbitron,sans-serif;font-size:2.4rem;color:var(--acc);margin:.6rem 0;text-shadow:0 0 16px rgba(44,240,122,.5)}
+.itext h2{margin:1rem 0 .4rem}.itext ol{margin:.2rem 0 1.2rem;padding-left:1.6rem;font-size:1.05rem;line-height:1.7}.itext li::marker{color:var(--acc);font-weight:700}
+#fab{z-index:500}
+.bwrap{width:96rem;height:52rem;display:grid;grid-template-columns:minmax(0,1fr) 40rem;gap:2rem;text-align:left}
+#bSvg{width:100%;height:100%;border:1px solid var(--line);background:var(--card);box-shadow:inset 0 0 60px rgba(44,240,122,.08);touch-action:none}
+.bside{display:flex;flex-direction:column;gap:.7rem;min-height:0}
+.bside ol{margin:0;padding-left:1.4rem;font-size:.95rem;line-height:1.55}.bside li::marker{color:var(--acc);font-weight:700}
+#bTray{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem}
+.bt{border:1px solid var(--line);background:var(--card);text-align:center;padding:.6rem .2rem;cursor:grab;touch-action:none}
+.bt.off{opacity:.3;pointer-events:none}
+.bt i{display:block;width:3.4rem;height:3.4rem;line-height:3.4rem;border-radius:50%;margin:0 auto .2rem;font-style:normal;font-weight:800;font-family:Orbitron,sans-serif;box-shadow:inset -5px -5px 8px rgba(0,0,0,.25)}
+.bt small{font-size:.75rem;color:var(--mut)}
+.bprog{height:1.2rem;border:1px solid var(--line);background:#02130d}
+#bFill{height:100%;width:0;background:linear-gradient(90deg,#1fd1b0,#2cf07a);transition:width .25s}
+.slot{cursor:pointer}
+.pi small{display:block;font-size:.55rem;color:var(--mut);margin-top:.15rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vials{display:flex;justify-content:center;gap:1.8rem;margin-bottom:1.4rem}
+.vial{width:6rem;text-align:center;opacity:.3;font-size:.8rem;text-transform:uppercase;letter-spacing:.12em;color:var(--mut)}
+.vial.on{opacity:1;color:var(--ink);animation:vp 1.2s ease-in-out infinite}
+.vial svg{width:3.6rem;height:6.4rem;display:block;margin:0 auto .3rem}
+@keyframes vp{50%{transform:translateY(-.5rem)}}
+.fbox.win{width:46rem;border-color:var(--acc);box-shadow:0 0 90px rgba(44,240,122,.35)}
+#wPic{width:10rem;height:10rem;margin:0 auto 1rem;display:flex;align-items:center;justify-content:center;animation:wpop .7s both}
+@keyframes wpop{0%{transform:scale(.3);opacity:0}70%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
+#conf{position:absolute;inset:0;pointer-events:none}
+.btn .pic{width:1.15rem;height:1.15rem;vertical-align:-.28rem;margin-right:.35rem;stroke-width:7}
+.btn.on .pic{stroke:#02130d;fill:rgba(2,13,11,.12)}
+.mt .pic{width:1.6rem;height:1.6rem;vertical-align:-.35rem;margin-right:.6rem;stroke-width:5}
+#fIcon{width:8rem;height:8rem;font-size:0}#fIcon .pic{stroke-width:3.5}
+html,body{touch-action:none;overscroll-behavior:none}
+@keyframes rise{from{opacity:0;transform:translateY(1.3rem);filter:blur(4px)}to{opacity:1;transform:none}}
+@keyframes scrIn{from{opacity:0;clip-path:inset(0 0 100% 0)}to{opacity:1;clip-path:inset(0 0 0 0)}}
+@keyframes scrOut{to{opacity:0;filter:blur(5px)}}
+@keyframes scan{0%{top:0;opacity:1}85%{opacity:1}100%{top:100%;opacity:0}}
+@keyframes blink{50%{opacity:0}}
+.screen:not([hidden]),#fab:not([hidden]){animation:scrIn .7s cubic-bezier(.3,.7,.2,1) both}
+.screen::before,#fab::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;z-index:5;pointer-events:none;opacity:0;background:linear-gradient(90deg,transparent,#2cf07a,#e8fff3,#2cf07a,transparent);box-shadow:0 0 28px 8px rgba(44,240,122,.55)}
+.screen:not([hidden])::before,#fab:not([hidden])::before{animation:scan .7s cubic-bezier(.3,.7,.2,1) both}
+.screen.out,#fab.out{animation:scrOut .3s ease-in forwards}
+.screen:not([hidden])>:is(svg,div,button):not(.fbox):not(.hbox):not(.bwrap):not(.ibox),
+:is(.screen,#fab):not([hidden]) :is(.fbox,.bside,.itext)>*,
+.screen:not([hidden]) .hbox>:not(.hgrid),
+.screen:not([hidden]) .bwrap>#bSvg{animation:rise .6s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(.35s + var(--i,0)*.09s)}
+.hgrid>*{animation:rise .5s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(.7s + var(--j,0)*.07s)}
+.boot .mission{animation:rise .7s both}.boot .elem{animation:rise .7s .15s both}.boot .labL{animation:rise .7s .3s both}.boot .tools{animation:rise .7s .45s both}
+.bootlog{font-size:.85rem;color:var(--mut);text-align:left;min-height:3.8rem}
+.bootlog span{display:block;opacity:0;animation:rise .3s both}
+.bootlog span:nth-child(1){animation-delay:.9s}.bootlog span:nth-child(2){animation-delay:1.5s}.bootlog span:nth-child(3){animation-delay:2.1s}
+.bootlog span:last-child::after{content:"_";color:var(--acc);animation:blink 1s steps(2) infinite}
+@keyframes jit3{0%,92%,100%{transform:none;filter:none}94%{transform:translate(-5px,2px);filter:hue-rotate(70deg)}96%{transform:translate(6px,-1px)}98%{transform:translate(-2px,1px);filter:saturate(2)}}
+@keyframes jit4{0%,100%{transform:none}20%{transform:translate(-6px,2px) skewX(2deg)}40%{transform:translate(5px,-2px)}60%{transform:translate(-3px,3px) skewX(-3deg)}80%{transform:translate(4px,0);filter:hue-rotate(60deg)}}
+.pic.gl{animation:jit3 2.6s steps(1) infinite}
+#bSvg.glt{animation:jit3 3.4s steps(1) infinite}
+.fbox.gl{border-color:#ff4d8d;box-shadow:0 0 50px rgba(255,77,141,.3);animation:jit4 .6s steps(1) infinite}
+.fbox.gl #fFill{background:linear-gradient(90deg,#ff4d8d,#1fd1b0,#2cf07a)}
+.fbox.gl #fIcon svg{animation:jit4 .45s steps(1) infinite}
+.mtop{flex-wrap:wrap}#mparts{order:3;flex:1 1 100%}#mparts .btn{font-size:.7rem}
+#bSvg.glt{animation-duration:calc(3.4s - var(--lv,0)*2.8s)}
+#sil{position:fixed;bottom:-2%;height:56vh;width:auto;aspect-ratio:1/1;z-index:505;pointer-events:none;opacity:0;fill:#010806;stroke:#2cf07a;stroke-width:1.2;filter:drop-shadow(0 0 14px rgba(255,77,141,.55))}
+#sil.on{animation:silf .9s steps(1) both}
+@keyframes silf{0%{opacity:.7}12%{opacity:0}24%{opacity:.85;transform:translateX(-8px)}36%{opacity:.1}48%{opacity:.8;transform:translateX(6px)}60%{opacity:0}72%{opacity:.7}100%{opacity:.5}}
+#crash{position:fixed;inset:0;z-index:800;background:#000;display:none;overflow:hidden}
+#crash.on{display:block;animation:redf .35s ease-out}
+@keyframes redf{0%{background-color:#b00}100%{background-color:#000}}
+#crash.scare{background-image:radial-gradient(ellipse at 50% 42%,#e9fff6 0%,#2cf07a 38%,#031a10 75%)}
+#face{display:none!important}
+#fig{position:absolute;left:50%;top:50%;height:96vh;width:auto;aspect-ratio:200/260;transform:translate(-50%,-50%);z-index:2;display:none;filter:drop-shadow(8px 0 0 rgba(255,0,60,.7)) drop-shadow(-8px 0 0 rgba(0,255,230,.6))}
+#fig.on{display:block;animation:scare .35s ease-out both,fj .09s steps(2) .35s infinite}
+#face{position:absolute;left:50%;top:50%;height:96vh;width:auto;aspect-ratio:200/260;transform:translate(-50%,-50%);z-index:2;display:none;filter:contrast(1.5) saturate(.4) drop-shadow(6px 0 0 rgba(255,0,60,.6)) drop-shadow(-6px 0 0 rgba(0,255,230,.5))}
+#face.on{display:block;animation:scare .35s ease-out both,fj .09s steps(2) .35s infinite}
+@keyframes scare{from{scale:.4;opacity:0}to{scale:1.12;opacity:1}}
+@keyframes fj{0%{transform:translate(-50%,-50%)}50%{transform:translate(calc(-50% + 14px),calc(-50% - 6px))}100%{transform:translate(calc(-50% - 10px),calc(-50% + 5px))}}
+#cStatic{position:absolute;inset:0;width:100%;height:100%;opacity:.35;image-rendering:pixelated;display:none;z-index:1}
+#cTxt{position:absolute;left:6rem;top:6rem;z-index:3;font:1.2rem/1.8 "Share Tech Mono",monospace;color:#ff4d5e;text-shadow:0 0 8px rgba(255,77,94,.6)}
+#cTxt.rb{color:var(--acc);text-shadow:0 0 8px rgba(44,240,122,.6)}
+#scanner{position:absolute;left:.8rem;top:.8rem;width:13.5rem;z-index:6;text-align:center;touch-action:none}
+.scLbl{font:700 .6rem Orbitron,sans-serif;letter-spacing:.2em;color:#1fd1b0;text-transform:uppercase;margin-bottom:.4rem}
+.scDisc{position:relative;width:13.5rem;height:13.5rem;border-radius:50%;border:2px solid var(--acc);background:radial-gradient(circle,rgba(44,240,122,.12),rgba(2,13,11,.8) 70%);box-shadow:0 0 24px rgba(44,240,122,.25),inset 0 0 24px rgba(44,240,122,.15);touch-action:none;cursor:pointer;overflow:hidden}
+.scDisc::before{content:"";position:absolute;inset:.8rem;border-radius:50%;border:1px dashed rgba(44,240,122,.55);animation:spin 18s linear infinite}
+.scDisc::after{content:"";position:absolute;left:50%;top:0;bottom:0;width:1px;background:rgba(44,240,122,.25)}
+.scCross{position:absolute;left:0;right:0;top:50%;height:1px;background:rgba(44,240,122,.25)}
+.scSweep{position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 0deg,rgba(44,240,122,0) 0deg,rgba(44,240,122,.55) 60deg,rgba(44,240,122,0) 62deg);opacity:0}
+.scDisc.scanning .scSweep{opacity:1;animation:spin 1.2s linear infinite}
+.scN{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:Orbitron,sans-serif;color:var(--acc);pointer-events:none}
+.scN b{font-size:2rem}.scN small{font-size:.55rem;letter-spacing:.14em;color:var(--mut)}
+.scProg{position:absolute;inset:0;transform:rotate(-90deg);pointer-events:none}
+.scProg circle{fill:none;stroke:#e8fff3;stroke-width:3;stroke-dasharray:289;stroke-dashoffset:289}
+.scTag{margin-top:.5rem;font:700 .65rem Orbitron,sans-serif;color:var(--acc);min-height:1.8rem}
+#scRes{position:absolute;inset:0;margin:auto;width:34rem;height:max-content;z-index:8;text-align:center;padding:1.6rem;background:rgba(2,13,11,.96);border:1px solid var(--acc);box-shadow:0 0 70px rgba(44,240,122,.35)}
+#scRes:not([hidden]){animation:rise .5s both}
+.hgrid>.hcard.glt{border-color:#ff4d8d;box-shadow:0 0 22px rgba(255,77,141,.4);animation:rise .5s cubic-bezier(.2,.8,.2,1) calc(.7s + var(--j,0)*.07s) both,jit3 2.2s steps(1) 1.6s infinite}
+.hcard.glt b{text-shadow:2px 0 #ff4d8d,-2px 0 #1fd1b0}
+.hcard[data-lab]{grid-column:5;grid-row:1/span 2;justify-content:center;gap:1rem}
+.hcard[data-lab] .hpic{width:9rem;height:9rem}
+
+#start #goStart{animation-delay:2.5s!important}
+.gfx{position:absolute;inset:0;z-index:6;pointer-events:none;overflow:hidden}
+.gfx i{position:absolute;left:-2%;right:-2%;opacity:0;mix-blend-mode:screen;animation:glf .5s steps(1) both}
+@keyframes glf{0%{opacity:0}15%{opacity:.9;transform:translateX(var(--x))}30%{opacity:0}45%{opacity:.7;transform:translateX(calc(var(--x)*-1))}60%{opacity:0}75%{opacity:.5;transform:translateX(var(--x))}100%{opacity:0}}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:900;background:repeating-linear-gradient(0deg,rgba(0,0,0,.14) 0 1px,transparent 1px 4px);opacity:.3}
+.grain{fill:#d6b36a;animation:drop 1.2s linear infinite}
+.grain:nth-child(2){animation-delay:.4s}.grain:nth-child(3){animation-delay:.8s}
+@keyframes drop{0%{transform:translateY(-6px);opacity:0}20%{opacity:1}100%{transform:translateY(46px);opacity:0}}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<section class="mission" id="mission">
+  <div class="mtop"><div class="logo"><span class="orb"></span>SAND<span class="g">LAB</span></div><div id="mparts"></div><span id="mprog"></span><button class="btn" id="muteBtn">Sound on</button><button class="btn" id="homeBtn">Home</button><button class="btn" id="hOpen">History</button></div>
+  <div id="mdet"></div>
+  <div class="steps" id="msteps"></div>
+</section>
+<main>
+  <section class="elem panel">
+    <h2>Element builder · add protons</h2>
+    <svg id="nuc" viewBox="0 0 360 300"></svg>
+    <div id="eInfo"></div>
+    <div class="row"><button class="btn" id="pm">− Proton</button><div class="pchip" id="pChip"><i>+</i><small>Drag onto<br>the nucleus</small></div><button class="btn" id="pp">+ Proton</button></div>
+    <div class="row"><button class="btn on" id="toLab">Send this atom to the lab →</button></div>
+  </section>
+  <section class="lab">
+    <div class="labL">
+      <h2>Molecule former</h2>
+      <svg id="ws" viewBox="0 0 800 440"></svg>
+      <div class="row">
+        <button class="btn on" id="mPull">Pull atom</button><button class="btn" id="mGroup">Move group</button>
+        <button class="btn" id="undo">Undo</button><button class="btn" id="reset">Sand</button><button class="btn" id="clear">Clear</button>
+      </div>
+      <div class="tip" style="text-align:center">Drag atoms together to bond · tap a bond to make it double, triple, then remove · drop outside the box to delete</div>
+      <div id="info"></div>
+    </div>
+    <div class="tools">
+      <div class="tabs"><button class="btn on" data-t="pal">Atoms</button><button class="btn" data-t="ex">Examples</button><button class="btn" data-t="al">Alloys</button></div>
+      <div class="tpanel" id="pal"></div>
+      <div class="tpanel" id="ex" hidden></div>
+      <div class="tpanel" id="al" hidden></div>
+    </div>
+  </section>
+</main>
+<div id="crash">
+<svg id="face" viewBox="0 0 200 260" aria-hidden="true"><path d="M18 135Q8 18 100 8Q192 18 182 135L190 258H148V150H52V258H10Z" fill="#040404"/><ellipse cx="100" cy="122" rx="54" ry="72" fill="#c9d3cf"/><path d="M44 96Q64 38 100 50Q136 38 156 96Q124 72 100 84Q76 72 44 96Z" fill="#040404"/><ellipse cx="76" cy="116" rx="23" ry="17" fill="#0a0e0d"/><ellipse cx="124" cy="116" rx="23" ry="17" fill="#0a0e0d"/><ellipse cx="76" cy="116" rx="17" ry="12" fill="#f4f7f5"/><ellipse cx="124" cy="116" rx="17" ry="12" fill="#f4f7f5"/><circle cx="77" cy="117" r="3.2" fill="#000"/><circle cx="123" cy="117" r="3.2" fill="#000"/><path d="M56 96Q76 86 94 98M106 98Q124 86 144 96" stroke="#111" stroke-width="3" fill="none"/><path d="M100 124L96 150Q100 154 104 150" stroke="#8b9692" stroke-width="2" fill="none"/><path d="M72 164Q100 232 128 164Q100 178 72 164Z" fill="#070000" stroke="#5a1a20" stroke-width="2"/></svg>
+<svg id="fig" viewBox="0 0 200 260" aria-hidden="true"><path d="M100 10C68 10 52 36 52 72C52 96 48 112 40 134C30 160 24 200 12 258H188C176 200 170 160 160 134C152 112 148 96 148 72C148 36 132 10 100 10Z" fill="#000"/><path d="M70 40C62 100 56 170 38 250M130 40C138 100 144 170 162 250M100 20C92 60 90 110 92 150" stroke="rgba(255,255,255,.1)" stroke-width="2" fill="none"/></svg>
+<canvas id="cStatic"></canvas><div id="cTxt"></div></div>
+<svg id="sil" viewBox="0 0 100 100" aria-hidden="true"><path d="M50 11C61 11 68 20 68 32C68 42 63 49 58 53L57 60C57 64 62 65 70 68Q92 74 94 100L6 100Q8 74 30 68C38 65 43 64 43 60L42 53C37 49 32 42 32 32C32 20 39 11 50 11Z"/></svg>
+<div class="screen" id="start">
+  <svg class="logoSvg" viewBox="0 0 200 200"><defs><radialGradient id="lg" cx="40%" cy="35%"><stop offset="0" stop-color="#b9ffd6"/><stop offset=".5" stop-color="#1fd1b0"/><stop offset="1" stop-color="#0d7a6a"/></radialGradient></defs>
+    <circle cx="100" cy="100" r="92" fill="none" stroke="#1fd1b0" stroke-width="3" opacity=".8"/>
+    <g class="spinA"><circle cx="100" cy="100" r="80" fill="none" stroke="#2cf07a" stroke-width="2"/><circle cx="165" cy="45" r="11" fill="#fff"/><circle cx="22" cy="70" r="6" fill="#fff"/><circle cx="48" cy="170" r="10" fill="#fff"/><circle cx="178" cy="115" r="5" fill="#fff"/></g>
+    <circle cx="100" cy="100" r="62" fill="url(#lg)"/><circle cx="100" cy="100" r="46" fill="none" stroke="#e8fff3" stroke-width="3"/><circle cx="100" cy="100" r="30" fill="none" stroke="#e8fff3" stroke-width="2" opacity=".8"/><circle cx="100" cy="100" r="9" fill="#e8fff3"/></svg>
+  <div class="tag" style="margin:0">Technology lab</div>
+  <div class="bigt">ORB<span>CORP</span> FABRICATOR</div>
+  
+  <div class="bootlog"><span>&gt; initializing atomic fabricator ... ok</span><span>&gt; calibrating sand injector ... ok</span><span>&gt; linking to robot systems ... ok</span></div>
+  <button class="btn on big" id="goStart">Start fabricating</button>
+  <div class="tip" id="tdiag" hidden></div>
+</div>
+<div class="screen" id="hist" hidden>
+  
+  
+ 
+  
+  
+  
+  <div class="hbox">
+  <div class="tag" style="margin:0 auto">Yara’s fabrication log</div>
+  <div class="hstats"><div class="hstat"><b id="hParts">0</b>parts built</div><div class="hstat"><b id="hRobots">0</b>part types made</div></div>
+  <div id="hList" class="hgrid"></div>
+  <div class="row"><button class="btn" id="hHome">← Title screen</button><button class="btn" id="hClear">Clear history</button><button class="btn on" id="hClose">Close</button></div>
+</div></div>
+<div class="screen" id="instr" hidden style="z-index:400"><div class="ibox">
+  <div class="ipic" id="iPic"></div>
+  <div class="itext"><div class="tag" style="margin:0;display:inline-block">Building instructions</div><div class="bigt2" id="iTitle"></div><div class="subt" id="iDesc" style="max-width:none"></div>
+   <h2>You will need</h2><div id="iNeed"></div><h2>Steps</h2><ol id="iSteps"></ol>
+   <div class="row" style="justify-content:flex-start"><button class="btn" id="iBack">← Back to history</button><button class="btn on" id="iBuild">Build this part</button></div></div>
+</div></div>
+<div class="screen" id="build" hidden style="z-index:350"><div class="bwrap">
+  <svg id="bSvg" viewBox="-6 -6 132 132"></svg>
+  <div class="bside">
+   <div class="row" style="justify-content:flex-start"><button class="btn" id="bBack">← Back to history</button></div>
+   <div class="tag" style="margin:0;align-self:flex-start">Build mode</div>
+   <div class="bigt2" id="bTitle" style="margin:0"></div>
+   <div class="subt" id="bDesc" style="max-width:none;text-align:left"></div>
+   <ol><li>Pick an atom from the tray.</li><li>Drag it onto a matching slot on the blueprint.</li><li>Tap a placed atom to take it back out.</li><li>Fill every slot to finish the part.</li></ol>
+   <h2>Atoms</h2><div id="bTray"></div>
+   <div class="bprog"><div id="bFill"></div></div><div id="bCount" class="tip"></div><div id="bMsg" class="st"></div>
+  </div>
+</div></div>
+<div class="screen" id="sandPop" hidden style="z-index:450"><div class="fbox" style="width:44rem">
+  <div class="fwrap"><svg viewBox="0 0 120 120" style="width:100%;height:100%"><path d="M24 14H96L70 52V64H50V52Z" fill="rgba(44,240,122,.1)" stroke="#2cf07a" stroke-width="3" stroke-linejoin="round"/><g><circle class="grain" cx="60" cy="68" r="3"/><circle class="grain" cx="56" cy="68" r="2.5"/><circle class="grain" cx="64" cy="68" r="2.5"/></g><path d="M30 112Q60 90 90 112Z" fill="#d6b36a"/></svg></div>
+  <div class="ftitle" id="sandTitle">Dispense a vial of sand into the fabricator</div>
+  <div class="fstage" style="margin-bottom:1.4rem"><span id="sandMsg"></span></div><div class="vials" id="vials"></div>
+  <button class="btn on big" id="sandGo" disabled>Continue</button>
+</div></div>
+<div class="screen" id="win" hidden style="z-index:550"><div class="fbox win">
+  <div class="tag" id="wTag" style="margin:0 auto 1rem;display:inline-block"></div>
+  <div id="wPic"></div>
+  <div class="bigt" id="wTitle" style="font-size:2.6rem"></div>
+  <div class="subt" id="wSub" style="margin:1rem auto 1.4rem"></div>
+  <div class="hstats" style="margin-bottom:1.4rem"><div class="hstat"><b id="wCount">0/7</b>part types made</div><div class="hstat"><b id="wTotal">0</b>total builds</div></div>
+  <div class="row"><button class="btn" id="wLab">Open the big lab</button><button class="btn on big" id="wHist">Back to history</button></div>
+</div><canvas id="conf"></canvas></div>
+<div id="fab" hidden><div class="fbox"><div class="fwrap"><div class="fring"></div><div class="fring fring2"></div><div id="fIcon"></div></div><div class="ftitle" id="fTitle"></div><div class="fstage" id="fStage"></div><div class="fbar"><div id="fFill"></div></div><div class="fpct" id="fPct"></div><button class="btn big" id="fErr" hidden style="margin-top:1.2rem">Return</button></div></div>
+<script>
+const E={
+ H:{v:1,r:20,c:"#f1f5f9",t:"#1c2233",n:"Hydrogen"},Li:{v:1,r:27,c:"#cc80ff",t:"#1c2233",n:"Lithium"},B:{v:3,r:23,c:"#ffb5b5",t:"#1c2233",n:"Boron"},
+ C:{v:4,r:25,c:"#4b5563",t:"#fff",n:"Carbon"},N:{v:3,r:24,c:"#3b82f6",t:"#fff",n:"Nitrogen"},O:{v:2,r:24,c:"#ef4444",t:"#fff",n:"Oxygen"},
+ F:{v:1,r:21,c:"#90e050",t:"#1c2233",n:"Fluorine"},Na:{v:1,r:30,c:"#a855f7",t:"#fff",n:"Sodium"},Mg:{v:2,r:29,c:"#86efac",t:"#1c2233",n:"Magnesium"},
+ Al:{v:3,r:30,c:"#bfa6a6",t:"#1c2233",n:"Aluminium"},Si:{v:4,r:32,c:"#d6b36a",t:"#1c2233",n:"Silicon"},P:{v:3,r:27,c:"#ff8000",t:"#1c2233",n:"Phosphorus"},
+ S:{v:2,r:27,c:"#facc15",t:"#1c2233",n:"Sulfur"},Cl:{v:1,r:28,c:"#22c55e",t:"#fff",n:"Chlorine"},K:{v:1,r:34,c:"#8f40d4",t:"#fff",n:"Potassium"},
+ Ca:{v:2,r:31,c:"#f59e0b",t:"#1c2233",n:"Calcium"},Fe:{v:3,r:30,c:"#e06633",t:"#fff",n:"Iron"},Cu:{v:2,r:29,c:"#c88033",t:"#fff",n:"Copper"},
+ Zn:{v:2,r:30,c:"#7d80b0",t:"#fff",n:"Zinc"},Ni:{v:2,r:30,c:"#50d050",t:"#1c2233",n:"Nickel"},Ti:{v:4,r:31,c:"#bfc2c7",t:"#1c2233",n:"Titanium"},
+ Ag:{v:1,r:33,c:"#d1d5db",t:"#1c2233",n:"Silver"},Sn:{v:4,r:33,c:"#8aa3a3",t:"#1c2233",n:"Tin"},Pt:{v:2,r:34,c:"#e5e7f0",t:"#1c2233",n:"Platinum"},
+ Au:{v:3,r:34,c:"#ffd123",t:"#1c2233",n:"Gold"},Hg:{v:2,r:34,c:"#b8b8d0",t:"#1c2233",n:"Mercury"},Pb:{v:2,r:35,c:"#575961",t:"#fff",n:"Lead"},
+ Cr:{v:3,r:29,c:"#8a99c7",t:"#fff",n:"Chromium"}
+};
+const ORDER=["Li","Na","K","Ca","Mg","Al","Fe","Cu","Zn","Ni","Cr","Ti","Ag","Sn","Pt","Au","Hg","Pb","Si","B","C","N","P","S","H","O","F","Cl"];
+const NAMES={
+ O2Si1:["SiO₂","Silicon dioxide: sand and quartz"],H4Si1:["SiH₄","Silane: gas for making chips"],Cl4Si1:["SiCl₄","Silicon tetrachloride"],C1Si1:["SiC","Silicon carbide: hard abrasive"],
+ H4O4Si1:["H₄SiO₄","Silicic acid"],O1Si1:["SiO","Silicon monoxide"],H2O1:["H₂O","Water"],H2O2:["H₂O₂","Hydrogen peroxide"],O2:["O₂","Oxygen gas"],O3:["O₃","Ozone"],
+ H2:["H₂","Hydrogen gas"],Cl2:["Cl₂","Chlorine gas"],N2:["N₂","Nitrogen gas"],F2:["F₂","Fluorine gas"],Cl1Na1:["NaCl","Table salt"],Cl1K1:["KCl","Potassium chloride"],
+ F1Li1:["LiF","Lithium fluoride"],C1O2:["CO₂","Carbon dioxide"],C1O1:["CO","Carbon monoxide"],C1H4:["CH₄","Methane"],C2H6:["C₂H₆","Ethane"],C3H8:["C₃H₈","Propane"],
+ C2H4:["C₂H₄","Ethene"],C2H2:["C₂H₂","Acetylene"],C2H6O1:["C₂H₅OH","Ethanol"],C2H4O2:["CH₃COOH","Acetic acid (vinegar)"],C1H2O1:["CH₂O","Formaldehyde"],
+ H3N1:["NH₃","Ammonia"],Cl1H1:["HCl","Hydrogen chloride"],F1H1:["HF","Hydrogen fluoride"],H2S1:["H₂S","Hydrogen sulfide"],H2O4S1:["H₂SO₄","Sulfuric acid"],
+ H3P1:["PH₃","Phosphine"],Ca1O1:["CaO","Quicklime"],Mg1O1:["MgO","Magnesia"],Na2O1:["Na₂O","Sodium oxide"],H1Na1O1:["NaOH","Sodium hydroxide"],
+ Ca1H2O2:["Ca(OH)₂","Slaked lime"],Al2O3:["Al₂O₃","Aluminium oxide: sapphire"],Fe2O3:["Fe₂O₃","Rust"],Cu1O1:["CuO","Copper oxide"],B1H3:["BH₃","Borane"],
+ Ag1Cl1:["AgCl","Silver chloride"],Ag2S1:["Ag₂S","Silver tarnish"],Au2O3:["Au₂O₃","Gold(III) oxide"],O1Zn1:["ZnO","Zinc oxide: sunscreen"],
+ O2Ti1:["TiO₂","Titanium dioxide: white paint"],O2Sn1:["SnO₂","Tin dioxide"]
+};
+const EX=[
+ {n:"Water",a:["O","H","H"],b:[[0,1,1],[0,2,1]]},{n:"CO₂",a:["C","O","O"],b:[[0,1,2],[0,2,2]]},
+ {n:"Methane",a:["C","H","H","H","H"],b:[[0,1,1],[0,2,1],[0,3,1],[0,4,1]]},{n:"Ammonia",a:["N","H","H","H"],b:[[0,1,1],[0,2,1],[0,3,1]]},
+ {n:"Table salt",a:["Na","Cl"],b:[[0,1,1]]},{n:"Peroxide",a:["O","O","H","H"],b:[[0,1,1],[0,2,1],[1,3,1]]},
+ {n:"Silane",a:["Si","H","H","H","H"],b:[[0,1,1],[0,2,1],[0,3,1],[0,4,1]]},
+ {n:"Silicic acid",a:["Si","O","O","O","O","H","H","H","H"],b:[[0,1,1],[0,2,1],[0,3,1],[0,4,1],[1,5,1],[2,6,1],[3,7,1],[4,8,1]]},
+ {n:"Ethanol",a:["C","C","O","H","H","H","H","H","H"],b:[[0,1,1],[1,2,1],[0,3,1],[0,4,1],[0,5,1],[1,6,1],[1,7,1],[2,8,1]]},
+ {n:"Ethene",a:["C","C","H","H","H","H"],b:[[0,1,2],[0,2,1],[0,3,1],[1,4,1],[1,5,1]]},{n:"H₂S",a:["S","H","H"],b:[[0,1,1],[0,2,1]]},
+ {n:"Sulfuric acid",a:["S","O","O","O","O","H","H"],b:[[0,1,2],[0,2,2],[0,3,1],[0,4,1],[3,5,1],[4,6,1]]},
+ {n:"Al₂O₃",a:["Al","Al","O","O","O"],b:[[0,2,1],[0,3,1],[0,4,1],[1,2,1],[1,3,1],[1,4,1]]},
+ {n:"Zinc oxide",a:["Zn","O"],b:[[0,1,2]]},{n:"TiO₂",a:["Ti","O","O"],b:[[0,1,2],[0,2,2]]},{n:"SnO₂",a:["Sn","O","O"],b:[[0,1,2],[0,2,2]]},
+ {n:"AgCl",a:["Ag","Cl"],b:[[0,1,1]]},{n:"Tarnish",a:["S","Ag","Ag"],b:[[0,1,1],[0,2,1]]},
+ {n:"Au₂O₃",a:["Au","Au","O","O","O"],b:[[0,2,1],[0,3,1],[0,4,1],[1,2,1],[1,3,1],[1,4,1]]}
+];
+const ALLOYS=[
+ {n:"Brass",c:{Cu:8,Zn:4},d:"Copper and zinc. Instruments, taps, door handles."},
+ {n:"Bronze",c:{Cu:14,Sn:1},d:"Mostly copper plus tin. Statues, bells, propellers."},
+ {n:"18k gold",c:{Au:7,Ag:2,Cu:3},d:"18 of 24 parts gold by weight, shown here by atom count."},
+ {n:"Sterling silver",c:{Ag:15,Cu:2},d:"92.5% silver by weight, plus copper for strength."},
+ {n:"Steel",c:{Fe:20,C:1},d:"Iron with a little carbon squeezed into the gaps."},
+ {n:"Stainless steel",c:{Fe:11,Cr:3,Ni:1},d:"Iron with chromium (stops rust) and nickel."},
+ {n:"Nitinol",c:{Ni:6,Ti:6},d:"Half nickel, half titanium. A memory metal that springs back when heated."}
+];
+const $=i=>document.getElementById(i),svg=$("ws");
+const subs="₀₁₂₃₄₅₆₇₈₉",sub=n=>n>1?String(n).split("").map(d=>subs[d]).join(""):"";
+let atoms=[],bonds=[],nid=1,mode="pull",drag=null,drags=new Map(),hist=[],alloy=null;
+
+const A=id=>atoms.find(a=>a.id==id);
+const used=a=>bonds.reduce((s,b)=>s+(b[0]==a.id||b[1]==a.id?b[2]:0),0);
+const free=a=>E[a.e].v-used(a);
+const bonded=(a,b)=>bonds.some(x=>(x[0]==a.id&&x[1]==b.id)||(x[0]==b.id&&x[1]==a.id));
+const nbrs=a=>bonds.filter(b=>b[0]==a.id||b[1]==a.id).map(b=>A(b[0]==a.id?b[1]:b[0]));
+function comp(a){const seen=new Set([a.id]),q=[a];while(q.length){const c=q.pop();nbrs(c).forEach(n=>{if(!seen.has(n.id)){seen.add(n.id);q.push(n)}})}return atoms.filter(x=>seen.has(x.id))}
+function pt(e,el=svg){const p=el.createSVGPoint();p.x=e.clientX;p.y=e.clientY;return p.matrixTransform(el.getScreenCTM().inverse())}
+function snap(){hist.push(JSON.stringify({atoms,bonds,nid,alloy}));if(hist.length>40)hist.shift()}
+function sand(){alloy=null;atoms=[{id:1,e:"O",x:300,y:220},{id:2,e:"Si",x:400,y:220},{id:3,e:"O",x:500,y:220}];nid=4;bonds=[[1,2,2],[2,3,2]]}
+
+function render(tgt){
+ let s="";
+ bonds.forEach(([i,j,o],bi)=>{
+  const a=A(i),b=A(j),dx=b.x-a.x,dy=b.y-a.y,d=Math.hypot(dx,dy)||1,nx=-dy/d*7,ny=dx/d*7;
+  (o==1?[0]:o==2?[-1,1]:[-1.6,0,1.6]).forEach(k=>s+=`<line class="bond" x1="${a.x+nx*k}" y1="${a.y+ny*k}" x2="${b.x+nx*k}" y2="${b.y+ny*k}"/>`);
+  s+=`<line class="hit" data-bi="${bi}" x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}"/>`;
+ });
+ atoms.forEach(a=>{
+  const e=E[a.e];
+  s+=`<g class="atom" data-id="${a.id}"><circle cx="${a.x}" cy="${a.y}" r="${e.r}" fill="${e.c}" stroke="rgba(0,0,0,.25)" stroke-width="2"/>`+
+     `<text x="${a.x}" y="${a.y}" fill="${e.t}" font-size="${e.r*.75}">${a.e}</text>`+
+     (free(a)>0&&!alloy?`<circle class="open" cx="${a.x}" cy="${a.y}" r="${e.r+6}"/>`:"")+
+     (tgt&&tgt.has(a.id)?`<circle class="tgt" cx="${a.x}" cy="${a.y}" r="${e.r+10}"/>`:"")+`</g>`;
+ });
+ svg.innerHTML=s;info();mUpdate();
+}
+function info(){
+ if(alloy&&atoms.length){
+  const cnt={};atoms.forEach(a=>cnt[a.e]=(cnt[a.e]||0)+1);
+  const mix=Object.keys(cnt).sort((x,y)=>cnt[y]-cnt[x]).map(e=>E[e].n+" "+Math.round(cnt[e]/atoms.length*100)+"%").join(" · ");
+  $("info").innerHTML=`<div class="frag"><b>${alloy.n}</b><span>${alloy.d}</span><em class="st ok">${mix}</em></div><div class="tip">An alloy is a mixture, not a molecule: the atoms share one lattice, so no bonds are drawn.</div>`;return;
+ }
+ const seen=new Set(),out=[];
+ atoms.forEach(a=>{
+  if(seen.has(a.id))return;const c=comp(a);c.forEach(x=>seen.add(x.id));
+  const cnt={};c.forEach(x=>cnt[x.e]=(cnt[x.e]||0)+1);
+  const key=Object.keys(cnt).sort().map(e=>e+cnt[e]).join(""),nm=c.length>1?NAMES[key]:null;
+  const f=nm?nm[0]:ORDER.filter(e=>cnt[e]).map(e=>e+sub(cnt[e])).join("");
+  const n=c.length==1?E[a.e].n+" atom":nm?nm[1]:"Your own creation";
+  const open=c.reduce((s,x)=>s+Math.max(0,free(x)),0),over=c.reduce((s,x)=>s+Math.max(0,-free(x)),0),ok=!open&&!over;
+  out.push([c.length,`<div class="frag"><b>${f}</b><span>${n}</span><em class="st ${ok?"ok":"w"}">${ok?"✓ stable":over?"▲ over-bonded":"▲ "+open+" open bond"+(open>1?"s":"")}</em></div>`]);
+ });
+ out.sort((x,y)=>y[0]-x[0]);
+ $("info").innerHTML=out.slice(0,3).map(x=>x[1]).join("")+(out.length>3?`<div class="tip">+${out.length-3} more groups in the box</div>`:"")||"<div class='tip'>The box is empty. Drag atoms in from the tray.</div>";
+}
+function relax(n=80){
+ for(let it=0;it<n;it++){
+  bonds.forEach(([i,j])=>{const a=A(i),b=A(j),dx=b.x-a.x,dy=b.y-a.y,d=Math.hypot(dx,dy)||1,L=E[a.e].r+E[b.e].r+44,k=(d-L)/d*.15;a.x+=dx*k;a.y+=dy*k;b.x-=dx*k;b.y-=dy*k});
+  for(let i=0;i<atoms.length;i++)for(let j=i+1;j<atoms.length;j++){const a=atoms[i],b=atoms[j],dx=b.x-a.x,dy=b.y-a.y,d=Math.hypot(dx,dy)||.01,m=E[a.e].r+E[b.e].r+(bonded(a,b)?0:30);if(d<m){const k=(m-d)/d*.25;a.x-=dx*k;a.y-=dy*k;b.x+=dx*k;b.y+=dy*k}}
+ }
+ atoms.forEach(a=>{a.x=Math.max(30,Math.min(770,a.x));a.y=Math.max(30,Math.min(410,a.y))});
+}
+function start(a,e,fromPal){
+ SFX.pick();const p=pt(e);
+ if(!fromPal&&mode=="pull")bonds=bonds.filter(b=>b[0]!=a.id&&b[1]!=a.id);
+ const grp=!fromPal&&mode=="group"?comp(a):[a];
+ drag={a,id:e.pointerId,group:grp.map(x=>({x,dx:x.x-p.x,dy:x.y-p.y}))};drags.set(e.pointerId,drag);move(e);
+}
+svg.addEventListener("pointerdown",e=>{
+ const h=e.target.closest(".hit");
+ if(h){e.preventDefault();snap();const i=+h.dataset.bi;if(bonds[i][2]>=3)bonds.splice(i,1);else bonds[i][2]++;SFX.click();render();return}
+ const g=e.target.closest(".atom");if(!g)return;e.preventDefault();
+ try{svg.setPointerCapture(e.pointerId)}catch(_){}
+ const at=A(+g.dataset.id);for(const d of drags.values())if(d.group.some(q=>q.x.id==at.id))return;snap();start(at,e,false);
+});
+$("pal").addEventListener("pointerdown",e=>{
+ const it=e.target.closest(".pi");if(!it)return;e.preventDefault();
+ snap();const a={id:nid++,e:it.dataset.e,x:0,y:0};atoms.push(a);
+ const p=pt(e);a.x=p.x;a.y=p.y;start(a,e,true);
+});
+function pair(){
+ const ids=new Set(drag.group.map(g=>g.x.id));let best=null,bd=1e9;
+ drag.group.forEach(({x:a})=>{
+  atoms.forEach(b=>{
+   if(ids.has(b.id)||bonded(a,b))return;
+   const d=Math.hypot(a.x-b.x,a.y-b.y);
+   if(d<E[a.e].r+E[b.e].r+55&&d<bd){bd=d;best=[a,b]}
+  });
+ });
+ return best;
+}
+function move(e){
+ const p=pt(e);
+ drag.group.forEach(g=>{g.x.x=p.x+g.dx;g.x.y=p.y+g.dy});
+ const hl=new Set(),cur=drag;
+ if(!alloy)drags.forEach(d=>{drag=d;const q=pair();if(q){hl.add(q[0].id);hl.add(q[1].id)}});
+ drag=cur;render(hl);
+}
+addEventListener("pointermove",e=>{const d=drags.get(e.pointerId);if(d){drag=d;move(e)}});
+addEventListener("pointerup",e=>{
+ const dd=drags.get(e.pointerId);if(!dd)return;drag=dd;
+ const r=svg.getBoundingClientRect(),inside=e.clientX>r.left&&e.clientX<r.right&&e.clientY>r.top&&e.clientY<r.bottom;
+ const ids=new Set(drag.group.map(g=>g.x.id));
+ if(!inside){SFX.del();atoms=atoms.filter(a=>!ids.has(a.id));bonds=bonds.filter(b=>!ids.has(b[0])&&!ids.has(b[1]));}
+ else{
+  for(let i=0;i<(alloy?0:1);i++){const p=pair();if(!p)break;const[a,t]=p;
+   bonds.push([a.id,t.id,1]);SFX.bond();
+   const dx=a.x-t.x,dy=a.y-t.y,d=Math.hypot(dx,dy)||1,L=E[a.e].r+E[t.e].r+44,mx=t.x+dx/d*L-a.x,my=t.y+dy/d*L-a.y;
+   drag.group.forEach(g=>{g.x.x+=mx;g.x.y+=my});
+  }
+  if(!alloy)relax();
+ }
+ drags.delete(e.pointerId);drag=null;render();
+});
+addEventListener("pointercancel",e=>{drags.delete(e.pointerId);drag=null;render()});
+
+function load(i){
+ snap();alloy=null;const x=EX[i];atoms=[];nid=1;
+ x.a.forEach((s,k)=>{const ang=k/Math.max(1,x.a.length-1)*6.283,rad=k?95:0;atoms.push({id:nid++,e:s,x:400+Math.cos(ang)*rad,y:220+Math.sin(ang)*rad})});
+ bonds=x.b.map(([a,b,o])=>[a+1,b+1,o]);relax(300);render();
+}
+function loadAlloy(i){
+ snap();const a=ALLOYS[i];alloy=a;atoms=[];bonds=[];nid=1;
+ const list=[];Object.keys(a.c).forEach(e=>{for(let k=0;k<a.c[e];k++)list.push(e)});
+ let s=i*37+11;const rnd=()=>(s=(s*9301+49297)%233280)/233280;
+ for(let k=list.length-1;k>0;k--){const j=Math.floor(rnd()*(k+1));[list[k],list[j]]=[list[j],list[k]]}
+ const per=5,rows=Math.ceil(list.length/per);
+ list.forEach((e,k)=>{const r=Math.floor(k/per),c=k%per;atoms.push({id:nid++,e,x:400+(c-(per-1)/2)*68+(r%2?17:-17),y:220+(r-(rows-1)/2)*60})});
+ render();
+}
+$("pal").innerHTML=Object.keys(E).map(k=>`<div class="pi" data-e="${k}" title="${E[k].n}"><i style="background:${E[k].c};color:${E[k].t}">${k}</i><small>${E[k].n}</small></div>`).join("");
+$("ex").innerHTML=EX.map((x,i)=>`<button class="btn" data-i="${i}">${x.n}</button>`).join("");
+$("ex").onclick=e=>{const b=e.target.closest("button");if(b)load(+b.dataset.i)};
+$("al").innerHTML=ALLOYS.map((x,i)=>`<button class="btn" data-i="${i}">${x.n}</button>`).join("");
+$("al").onclick=e=>{const b=e.target.closest("button");if(b)loadAlloy(+b.dataset.i)};
+document.querySelector(".tabs").onclick=e=>{
+ const b=e.target.closest("button");if(!b)return;
+ document.querySelectorAll(".tabs .btn").forEach(x=>x.classList.toggle("on",x==b));
+ ["pal","ex","al"].forEach(id=>$(id).hidden=id!=b.dataset.t);
+};
+$("mPull").onclick=()=>{mode="pull";$("mPull").classList.add("on");$("mGroup").classList.remove("on")};
+$("mGroup").onclick=()=>{mode="group";$("mGroup").classList.add("on");$("mPull").classList.remove("on")};
+$("undo").onclick=()=>{if(hist.length){const s=JSON.parse(hist.pop());atoms=s.atoms;bonds=s.bonds;nid=s.nid;alloy=s.alloy||null;render()}};
+$("reset").onclick=()=>{snap();sand();render()};
+$("clear").onclick=()=>{snap();alloy=null;atoms=[];bonds=[];render()};
+
+/* ---------- element builder ---------- */
+const SYM="H He Li Be B C N O F Ne Na Mg Al Si P S Cl Ar K Ca Sc Ti V Cr Mn Fe Co Ni Cu Zn Ga Ge As Se Br Kr Rb Sr Y Zr Nb Mo Tc Ru Rh Pd Ag Cd In Sn Sb Te I Xe Cs Ba La Ce Pr Nd Pm Sm Eu Gd Tb Dy Ho Er Tm Yb Lu Hf Ta W Re Os Ir Pt Au Hg Tl Pb Bi Po At Rn Fr Ra Ac Th Pa U Np Pu Am Cm Bk Cf Es Fm Md No Lr Rf Db Sg Bh Hs Mt Ds Rg Cn Nh Fl Mc Lv Ts Og".split(" ");
+const NAME="Hydrogen,Helium,Lithium,Beryllium,Boron,Carbon,Nitrogen,Oxygen,Fluorine,Neon,Sodium,Magnesium,Aluminium,Silicon,Phosphorus,Sulfur,Chlorine,Argon,Potassium,Calcium,Scandium,Titanium,Vanadium,Chromium,Manganese,Iron,Cobalt,Nickel,Copper,Zinc,Gallium,Germanium,Arsenic,Selenium,Bromine,Krypton,Rubidium,Strontium,Yttrium,Zirconium,Niobium,Molybdenum,Technetium,Ruthenium,Rhodium,Palladium,Silver,Cadmium,Indium,Tin,Antimony,Tellurium,Iodine,Xenon,Caesium,Barium,Lanthanum,Cerium,Praseodymium,Neodymium,Promethium,Samarium,Europium,Gadolinium,Terbium,Dysprosium,Holmium,Erbium,Thulium,Ytterbium,Lutetium,Hafnium,Tantalum,Tungsten,Rhenium,Osmium,Iridium,Platinum,Gold,Mercury,Thallium,Lead,Bismuth,Polonium,Astatine,Radon,Francium,Radium,Actinium,Thorium,Protactinium,Uranium,Neptunium,Plutonium,Americium,Curium,Berkelium,Californium,Einsteinium,Fermium,Mendelevium,Nobelium,Lawrencium,Rutherfordium,Dubnium,Seaborgium,Bohrium,Hassium,Meitnerium,Darmstadtium,Roentgenium,Copernicium,Nihonium,Flerovium,Moscovium,Livermorium,Tennessine,Oganesson".split(",");
+const FACT={1:"The lightest element and the fuel of stars.",2:"Light gas in balloons. It almost never bonds.",3:"Metal in phone and electric-car batteries.",6:"The backbone of all living things, diamond and pencil lead.",7:"78% of the air you breathe.",8:"Needed for breathing and fire. Also in sand and water.",10:"Glows orange-red in neon signs.",11:"Soft metal that fizzes in water. Salt is sodium plus chlorine.",13:"Light, strong metal in cans and planes.",14:"The main element in sand and computer chips.",16:"Yellow powder; rotten-egg smell in some compounds.",17:"A green gas that disinfects pools.",20:"In bones, teeth and chalk.",26:"The core of steel. Blood uses it to carry oxygen.",29:"Reddish metal used in wires and pipes.",47:"The best electrical conductor of all metals.",50:"Soft metal used for bronze and tin cans.",74:"Highest melting point of any metal, about 3400 °C.",78:"Rare shiny metal in jewelry and car exhausts.",79:"Dense, soft, never rusts. Prized for thousands of years.",80:"The only metal that is liquid at room temperature.",82:"Heavy, soft, toxic metal once used in pipes and paint.",83:"Technically radioactive, but lasts far longer than the universe has existed.",92:"Radioactive. Fuel for nuclear power plants.",118:"Made only in labs. A few atoms ever existed, each for a split second."};
+const CAP=[2,8,8,18,18,32,32];
+function shells(z){let r=z;const o=[];for(const c of CAP){if(r<=0)break;const n=Math.min(c,r);o.push(n);r-=n}return o}
+let Z=1,note="",ed=null,eds=new Map();
+function drawNuc(){
+ const sym=SYM[Z-1],sh=shells(Z),N=Math.round(Z*(1+Z/140))-(Z==1?1:0),el=E[sym];
+ let s="";
+ sh.forEach((n,k)=>{const R=52+k*13;
+  s+=`<circle cx="180" cy="150" r="${R}" fill="none" stroke="var(--line)" stroke-width="2"/><g style="transform-origin:180px 150px;animation:spin ${10+k*5}s linear infinite${k%2?" reverse":""}">`;
+  for(let i=0;i<n;i++){const a=i/n*6.283+k;s+=`<circle cx="${180+Math.cos(a)*R}" cy="${150+Math.sin(a)*R}" r="4.5" fill="#e8fff3"/>`}
+  s+="</g>";
+ });
+ const nr=16+Math.sqrt(Z)*2.4,col=el?el.c:`hsl(${Z*47%360} 55% 62%)`;
+ s+=`<circle id="nucc" cx="180" cy="150" r="${nr}" fill="${col}" stroke="rgba(0,0,0,.3)" stroke-width="2" style="cursor:grab"/><text x="180" y="150" text-anchor="middle" dominant-baseline="central" font-family="Orbitron,sans-serif" font-weight="800" font-size="${Math.max(16,nr*.8)}" fill="${el?el.t:"#1c2233"}" style="pointer-events:none">${sym}</text>`;
+ $("nuc").innerHTML=s;
+ $("eInfo").innerHTML=`<div><b>${NAME[Z-1]}</b> <span style="color:var(--mut)">(${sym}) · #${Z}</span></div>`+
+  `<div>${Z} protons · ${Z} electrons · ~${N} neutrons</div>`+
+  `<div style="color:var(--mut)">Shells (simplified): ${sh.join(" · ")}</div>`+
+  (FACT[Z]?`<div class="st ok">${FACT[Z]}</div>`:"")+((Z>83||Z==43||Z==61)?`<div class="st w">Radioactive: no stable version.</div>`:"")+(note?`<div class="st ok">${note}</div>`:"");
+}
+function addPal(k){$("pal").insertAdjacentHTML("beforeend",`<div class="pi" data-e="${k}" title="${E[k].n}"><i style="background:${E[k].c};color:${E[k].t}">${k}</i><small>${E[k].n}</small></div>`)}
+function ensureEl(z){
+ const s=SYM[z-1];if(E[s])return s;
+ const o=shells(z).pop(),tm=(z>=21&&z<=30)||(z>=39&&z<=48)||(z>=57&&z<=80)||z>=89;
+ E[s]={v:tm?2:(o<=4?o:8-o),r:Math.round(20+Math.sqrt(z)*1.6),c:`hsl(${z*47%360} 55% 62%)`,t:"#1c2233",n:NAME[z-1]};
+ ORDER.push(s);addPal(s);return s;
+}
+function step(d){Z=Math.max(1,Math.min(118,Z+d));note="";SFX.proton(Z);drawNuc()}
+$("pp").onclick=()=>step(1);$("pm").onclick=()=>step(-1);
+$("toLab").onclick=()=>{
+ const s=ensureEl(Z);snap();
+ atoms.push({id:nid++,e:s,x:130+Math.random()*540,y:90+Math.random()*260});
+ note="Sent "+s+" to the lab box.";SFX.pop();render();drawNuc();
+};
+function eGhost(e){ed.g.style.left=e.clientX+"px";ed.g.style.top=e.clientY+"px"}
+function eStart(kind,e){
+ e.preventDefault();const g=document.createElement("div");
+ g.style.cssText="position:fixed;z-index:99;pointer-events:none;width:3rem;height:3rem;border-radius:50%;background:#f87171;color:#fff;font-weight:800;font-size:1.6rem;text-align:center;line-height:3rem;transform:translate(-50%,-50%);box-shadow:0 4px 12px rgba(0,0,0,.35)";
+ g.textContent="+";document.body.appendChild(g);ed={kind,g};eds.set(e.pointerId,ed);eGhost(e);
+}
+$("pChip").addEventListener("pointerdown",e=>eStart("add",e));
+$("nuc").addEventListener("pointerdown",e=>{if(e.target.id=="nucc")eStart("rm",e)});
+addEventListener("pointermove",e=>{const d=eds.get(e.pointerId);if(d){ed=d;eGhost(e)}});
+addEventListener("pointerup",e=>{
+ const d1=eds.get(e.pointerId);if(!d1)return;eds.delete(e.pointerId);ed=d1;ed.g.remove();
+ const r=$("nuc").getBoundingClientRect(),sc=Math.min(r.width/360,r.height/300),d=Math.hypot(e.clientX-(r.left+r.width/2),e.clientY-(r.top+r.height/2));
+ if(ed.kind=="add"&&d<70*sc)step(1);else if(ed.kind=="rm"&&d>70*sc)step(-1);
+ ed=null;
+});
+addEventListener("pointercancel",e=>{const d=eds.get(e.pointerId);if(d){d.g.remove();eds.delete(e.pointerId)}});
+
+/* ---------- mission ---------- */
+const PARTS=[
+ {n:"Brain chip",i:"",d:"The processor: ultra-pure silicon with gold contacts.",hint:"Start from sand. Drag both oxygen atoms off and drop them outside the box. Then climb to element 79 and send gold over.",
+  r:[["Pure silicon, no oxygen left",s=>s.cnt.Si>=1&&!s.cnt.O],["Gold contact (Au)",s=>s.cnt.Au>=1]]},
+ {n:"Camera eye",i:"",d:"A glass lens with an anti-glare coating.",hint:"Keep the sand (SiO₂). Next to it build TiO₂: add Ti and two O, bond them and tap each bond to make it double.",
+  r:[["Glass: a complete SiO₂ molecule",s=>s.mols.has("O2Si1")],["Coating: a complete TiO₂ molecule",s=>s.mols.has("O2Ti1")]]},
+ {n:"Power cell",i:"",d:"A lithium-ion cell: lithium and carbon.",hint:"Element builder: climb to 3 (lithium) and send it twice, then climb to 6 (carbon) and send it.",
+  r:[["2 lithium atoms (Li)",s=>(s.cnt.Li||0)>=2],["Carbon (C)",s=>s.cnt.C>=1]]},
+ {n:"Coolant",i:"",fail:"ERROR 07: Pressure fault in the coolant line. The ethanol feed valve is stuck.",d:"An alcohol coolant that will not freeze.",hint:"Open the Examples tab and tap Ethanol, or build it: 2 C, 1 O and 6 H.",
+  r:[["Ethanol: a complete C₂H₅OH molecule",s=>s.mols.has("C2H6O1")]]},
+ {n:"Frame",i:"",fail:"ERROR 21: Weld fault in the frame jig. The alloy melt temperature is out of range.",d:"Strong and rust-proof.",hint:"Open the Alloys tab and build stainless steel.",
+  r:[["Stainless steel alloy",s=>s.alloy=="Stainless steel"]]},
+ {n:"Muscle wire",i:"",fail:"ERROR 12: The nitinol would not anneal. The heating element is offline.",d:"A memory metal that bends back when heated.",hint:"Open the Alloys tab and build Nitinol: half nickel, half titanium.",
+  r:[["Nitinol alloy",s=>s.alloy=="Nitinol"]]},
+ {n:"Wiring",i:"",fail:"ERROR 33: Short circuit detected on the conductor trace. The insulation layer did not cure.",d:"Copper wire with silver-plated contacts.",hint:"Element builder: send copper (29) three times and silver (47) once.",
+  r:[["3 copper atoms (Cu)",s=>(s.cnt.Cu||0)>=3],["Silver contact (Ag)",s=>s.cnt.Ag>=1]]},
+ {n:"Memory card",i:"",glitchy:true,crash:true,d:"Stores the robot’s memories. Silicon storage cells with gold contacts.",hint:"",
+  r:[["4 silicon atoms (Si)",s=>(s.cnt.Si||0)>=4],["2 gold contacts (Au)",s=>(s.cnt.Au||0)>=2]]}
+];
+const STEPS=[
+ [["Start with the sand molecule",null],["Drag both oxygen atoms out and drop them outside the box",0],["Climb to element 79 (gold) with the + proton",null],["Tap Send this atom to the lab",1],["Press Fabricate part","f"]],
+ [["Press Sand: that is your glass (SiO₂)",0],["Drag Ti and two O from the Atoms tab",null],["Drag them together to bond",null],["Tap each bond to make it double",1],["Press Fabricate part","f"]],
+ [["Climb to element 3 (lithium)",null],["Send it to the lab twice",0],["Climb to element 6 (carbon) and send it",1],["Press Fabricate part","f"]],
+ [["Open the Examples tab",null],["Tap Ethanol",0],["Press Fabricate part","f"]],
+ [["Open the Alloys tab",null],["Tap Stainless steel",0],["Press Fabricate part","f"]],
+ [["Open the Alloys tab",null],["Tap Nitinol",0],["Press Fabricate part","f"]],
+ [["Climb to element 29 (copper)",null],["Send it to the lab 3 times",0],["Climb to element 47 (silver) and send it",1],["Press Fabricate part","f"]],
+ [["Open the Atoms tab",null],["Drag 4 silicon (Si) into the box",0],["Drag 2 gold (Au) into the box",1],["Press Fabricate part","f"]]
+];
+let mCur=0,mDone=new Set(),mSig="",mMsg="";
+function labState(){
+ if(alloy)return{cnt:{},mols:new Set(),alloy:alloy.n};
+ const cnt={},mols=new Set(),seen=new Set();
+ atoms.forEach(a=>cnt[a.e]=(cnt[a.e]||0)+1);
+ atoms.forEach(a=>{if(seen.has(a.id))return;const c=comp(a);c.forEach(x=>seen.add(x.id));
+  const k={};c.forEach(x=>k[x.e]=(k[x.e]||0)+1);
+  const open=c.reduce((s,x)=>s+Math.max(0,free(x)),0),over=c.reduce((s,x)=>s+Math.max(0,-free(x)),0);
+  if(c.length>1&&!open&&!over)mols.add(Object.keys(k).sort().map(e=>e+k[e]).join(""));
+ });
+ return{cnt,mols,alloy:null};
+}
+function mUpdate(force){
+ const s=labState(),p=PARTS[mCur],res=p.r.map(q=>!!q[1](s)),all=res.every(Boolean);
+ const sig=[mCur,[...mDone].join(),res.join(),mMsg].join("|");
+ const nOk=res.filter(Boolean).length;if(sig!=mSig&&!force&&nOk>mPrev&&mPrevPart==mCur)SFX.ping();mPrev=nOk;mPrevPart=mCur;
+ if(sig==mSig&&!force)return;mSig=sig;
+ $("mprog").textContent=mDone.size+" PART"+(mDone.size==1?"":"S")+" MADE";
+ $("msteps").innerHTML=mDone.size==PARTS.length?"":STEPS[mCur].map((st,i)=>{const dn=st[1]==="f"?mDone.has(mCur):st[1]!=null&&res[st[1]];return `<div class="step${dn?" ok":""}"><b>${dn?"✓":i+1}</b><span>${st[0]}</span></div>`}).join("");
+ $("mparts").innerHTML=PARTS.map((q,i)=>`<button class="btn${i==mCur?" on":""}" data-i="${i}">${mDone.has(i)?"✓ ":pic(i)}${q.n}</button>`).join("");
+ if(mDone.size==PARTS.length){
+  $("mdet").innerHTML=`<div><div class="mt">ALL PARTS MADE</div></div><div class="req ok">Every replacement part has been made. Open History to make any of them again.</div><button class="btn on" id="mReset">Start over</button>`;return;
+ }
+ $("mdet").innerHTML=`<div><div class="mt">${pic(mCur)}${p.n}</div><div class="mdesc">${p.d}</div></div>`+
+  `<div>${p.r.map((q,i)=>`<div class="req${res[i]?" ok":""}">${res[i]?"✓":"○"} ${q[0]}</div>`).join("")}${mMsg?`<div class="st ok">${mMsg}</div>`:""}</div>`+
+  `<button class="btn on" id="mFab" ${all?"":"disabled"}>${mDone.has(mCur)?"Rebuild part":"Fabricate part"}</button>`;
+}
+let fabBusy=false;
+function runFab(){
+ fabBusy=true;const p=PARTS[mCur];
+ $("fIcon").innerHTML=pic(PARTS.indexOf(p));$("fTitle").textContent="Fabricating: "+p.n;$("fab").hidden=false;
+ fabReset();if(p.glitchy){glitchFab(p);return}
+ const steps=[[0,"Warming up the lab…"],[8,"Gathering atoms…"],[22,"Gathering atoms…"],[35,"Forming bonds…"],[48,"Forming bonds…"],[62,"Assembling the part…"],[76,"Assembling the part…"],[88,"Final quality check…"],[100,"Final quality check…"]];
+ let i=0;
+ (function go(){
+  const q=steps[i][0],f=q/100;if(p.fail&&q>=62){fabError(p);return}
+  $("fFill").style.width=q+"%";$("fPct").textContent=q+"%";$("fStage").textContent=steps[i][1];
+  const ic=$("fIcon").style;ic.opacity=.25+.75*f;ic.filter="blur("+(1-f)*10+"px) grayscale("+(1-f)+")";ic.transform="scale("+(.6+.4*f)+")";
+  i++;
+  SFX.tick(i);if(i<steps.length)setTimeout(go,700+Math.random()*800);else setTimeout(finishFab,800);
+ })();
+}
+function runFabOld(){
+ fabBusy=true;const p=PARTS[mCur];
+ $("fIcon").textContent=p.i;$("fTitle").textContent="Fabricating: "+p.n;$("fab").hidden=false;
+ const stages=["Gathering atoms…","Forming bonds…","Assembling the part…","Final quality check…"],T=3600,t0=performance.now();
+ (function tick(now){
+  const q=Math.min(1,(now-t0)/T);
+  $("fFill").style.width=q*100+"%";$("fPct").textContent=Math.round(q*100)+"%";
+  $("fStage").textContent=stages[Math.min(3,Math.floor(q*4))];
+  const ic=$("fIcon").style;ic.opacity=.25+.75*q;ic.filter="blur("+(1-q)*10+"px) grayscale("+(1-q)+")";ic.transform="scale("+(.6+.4*q)+")";
+  if(q<1)requestAnimationFrame(tick);else finishFab();
+ })(t0);
+}
+function finishFab(){
+ const p=PARTS[mCur];
+ $("fStage").textContent="✓ Complete!";SFX.done();$("fTitle").textContent=p.n+" built";
+ mMsg=p.n+" fabricated! The lab box is clear for the next part.";
+ mDone.add(mCur);logPart(p);snap();atoms=[];bonds=[];alloy=null;
+ const nx=PARTS.findIndex((q,i)=>!mDone.has(i));if(nx>-1)mCur=nx;
+ render();mUpdate(true);
+ setTimeout(()=>{$("fab").hidden=true;fabBusy=false;const f=afterFab;afterFab=null;if(p.crash)crashSequence();else showSuccess(p,f)},1000);
+}
+$("mission").addEventListener("click",e=>{
+ if(e.target.closest("#mReset")){mDone=new Set();mCur=0;mMsg="";mUpdate(true);return}
+ if(e.target.closest("#mFab")){
+  const s=labState();if(fabBusy||!PARTS[mCur].r.every(q=>q[1](s)))return;
+  runFab();return;
+ }
+ const b=e.target.closest("#mparts .btn");if(b){mCur=+b.dataset.i;mMsg="";mUpdate(true)}
+});
+let HIST=[];try{HIST=JSON.parse(localStorage.getItem("orbFabHistory")||"[]")}catch(_){}
+function saveHist(){try{localStorage.setItem("orbFabHistory",JSON.stringify(HIST.slice(-100)))}catch(_){}}
+function logPart(p){
+ const t=new Date().toLocaleString([],{month:"short",day:"numeric",hour:"2-digit",minute:"2-digit"});
+ HIST.push({i:p.i,n:p.n,t});
+ 
+ saveHist();
+}
+function showHist(fromStart){
+ const rows=HIST.slice(-10).reverse();
+ $("hParts").textContent=HIST.filter(h=>h.n!=="Robot assembled").length;$("hRobots").textContent=new Set(HIST.filter(h=>h.n!=="Robot assembled").map(h=>h.n)).size+"/"+PARTS.length;
+ $("hList").innerHTML=rows.length?rows.map(h=>`<div class="hrow"><span class="hi">${h.i}</span><b>${h.n}</b><span class="ht">${h.t}</span></div>`).join(""):`<div class="tip" style="padding:1.2rem">No parts built yet. Your first creation will appear here.</div>`;
+ renderCards();$("hClose").textContent=fromStart?"Enter the lab →":"Close";
+ $("hist").hidden=false;
+}
+$("goStart").onclick=()=>{$("start").hidden=true;showHist(true)};
+$("hClose").onclick=()=>{$("hist").hidden=true;bootLab()};
+$("hOpen").onclick=()=>showHist(false);
+$("hClear").onclick=()=>{const fs=$("hClose").textContent!=="Close";HIST=[];saveHist();showHist(fs)};
+const PICS=[
+ '<rect x="32" y="32" width="56" height="56" rx="4"/><rect x="46" y="46" width="28" height="28"/><path d="M44 20V32M60 20V32M76 20V32M44 88V100M60 88V100M76 88V100M20 44H32M20 60H32M20 76H32M88 44H100M88 60H100M88 76H100"/>',
+ '<circle cx="60" cy="60" r="40"/><circle cx="60" cy="60" r="26"/><circle cx="60" cy="60" r="11" fill="#2cf07a"/><circle cx="49" cy="49" r="4" fill="#e8fff3" stroke="none"/>',
+ '<rect x="22" y="40" width="66" height="42" rx="5"/><rect x="88" y="52" width="9" height="18"/><path d="M62 46L48 64H60L55 78L74 58H62Z" fill="#2cf07a"/>',
+ '<path d="M50 22H70V48L92 92Q96 100 88 100H32Q24 100 28 92L50 48Z"/><path d="M37 80H83L90 94H30Z" fill="rgba(44,240,122,.4)"/><path d="M44 22H76"/>',
+ '<rect x="26" y="26" width="68" height="68"/><path d="M26 26L94 94M94 26L26 94"/><rect x="52" y="52" width="16" height="16" fill="#2cf07a"/>',
+ '<path d="M16 60H28Q34 22 40 60T52 60T64 60T76 60T88 60H104" fill="none"/><circle cx="16" cy="60" r="6"/><circle cx="104" cy="60" r="6"/>',
+ '<path d="M12 84Q38 84 50 62T86 46" fill="none"/><rect x="84" y="34" width="24" height="22" rx="3"/><path d="M92 34V24M100 34V24"/><circle cx="12" cy="84" r="5"/>',
+ '<path d="M30 18H78L94 34V102H30Z"/><rect x="40" y="42" width="22" height="18"/><rect x="66" y="42" width="18" height="18"/><rect x="40" y="66" width="44" height="14"/><path d="M38 102V92M48 102V92M58 102V92M68 102V92M78 102V92"/><path d="M30 18H78L94 34V102H30Z" stroke="#ff4d8d" opacity=".75" transform="translate(5 -3)"/><path d="M30 18H78L94 34V102H30Z" stroke="#1fd1b0" opacity=".75" transform="translate(-4 3)"/><rect x="18" y="56" width="90" height="5" fill="#07201a" stroke="none" transform="translate(7 0)"/><path d="M12 50H44M76 64H110M22 86H52" stroke="#2cf07a"/><rect x="62" y="24" width="14" height="4" fill="#ff4d8d" stroke="none" opacity=".8"/>'
+];
+const pic=i=>'<svg class="pic'+(PARTS[i]&&PARTS[i].glitchy?' gl':'')+'" viewBox="0 0 120 120">'+PICS[i]+'</svg>';
+function renderCards(){
+ $("hList").innerHTML=PARTS.map((p,i)=>{const hs=HIST.filter(h=>h.n===p.n),n=hs.length;
+  return `<button class="hcard${n?"":" dim"}${p.glitchy?" glt":""}" data-i="${i}" style="--j:${i}"><div class="hpic">${pic(i)}</div><b>${p.n}</b><span>${n?"Built ×"+n+" · "+hs[n-1].t:"Not built yet"}</span><span style="color:var(--acc)">Tap for instructions</span></button>`}).join("")+
+  `<button class="hcard" data-lab="1" style="--j:8"><div class="hpic"><svg class="pic" viewBox="0 0 120 120"><circle cx="60" cy="60" r="10" fill="#2cf07a"/><ellipse cx="60" cy="60" rx="46" ry="18"/><ellipse cx="60" cy="60" rx="46" ry="18" transform="rotate(60 60 60)"/><ellipse cx="60" cy="60" rx="46" ry="18" transform="rotate(120 60 60)"/></svg></div><b>Big lab</b><span>Make an atom or molecule</span><span style="color:var(--acc)">Tap to open the lab</span></button>`;
+}
+let iCur=0;
+function openInstr(i){
+ iCur=i;const p=PARTS[i];
+ $("iPic").innerHTML=pic(i);$("iTitle").textContent=p.i+" "+p.n;$("iDesc").textContent=p.d;
+ $("iNeed").innerHTML=p.r.map(q=>`<div class="req">• ${q[0]}</div>`).join("");
+ $("iSteps").innerHTML=STEPS[i].map(s=>`<li>${s[0]}</li>`).join("");
+ $("instr").hidden=false;
+}
+$("hList").onclick=e=>{if(e.target.closest("[data-lab]")){$("hist").hidden=true;bootLab();return}const c=e.target.closest(".hcard[data-i]");if(c)openBuild(+c.dataset.i)};
+$("iBack").onclick=()=>{$("instr").hidden=true};
+$("iBuild").onclick=()=>{$("instr").hidden=true;$("hist").hidden=true;mCur=iCur;mMsg="";mUpdate(true)};
+function goHome(){["hist","instr","build"].forEach(id=>$(id).hidden=true);$("start").hidden=false;lockStart()}
+$("homeBtn").onclick=goHome;$("hHome").onclick=goHome;
+const BP=[
+ [["Si",46,46],["Si",74,46],["Si",46,74],["Si",74,74],["Au",60,24],["Au",60,96],["Au",24,60],["Au",96,60]],
+ [["Si",60,60],["O",60,36],["O",60,84],["Ti",34,60],["O",34,38],["O",34,82]],
+ [["Li",38,48],["Li",38,74],["C",64,61]],
+ [["H",40,44],["H",60,44],["H",80,44],["C",40,70],["C",60,70],["O",80,70],["H",40,96],["H",60,96],["H",80,96]],
+ [["Fe",26,26],["Fe",94,26],["Fe",26,94],["Fe",94,94],["Cr",60,60],["Ni",60,26]],
+ [["Ni",18,60],["Ti",35,60],["Ni",52,60],["Ti",69,60],["Ni",85,60],["Ti",102,60]],
+ [["Cu",30,82],["Cu",50,64],["Cu",70,52],["Ag",96,46]],
+ [["Si",44,38],["Si",70,38],["Si",44,62],["Si",70,62],["Au",50,88],["Au",72,88]]
+];
+let afterFab=null,bi=-1,bFill=[],bHot=-1,bDrag=null,bDrags=new Map(),bDone=false,bPlaced=false;
+function drawSlots(){
+ let s=`<g style="fill:rgba(44,240,122,.05);stroke:#2cf07a;stroke-width:1.5;opacity:.55;stroke-linecap:round;stroke-linejoin:round">${PICS[bi]}</g>`;
+ BP[bi].forEach(([e,x,y],k)=>{
+  const el=E[e],hot=k==bHot;
+  s+=`<g class="slot" data-k="${k}">`+(bFill[k]?
+   `<circle cx="${x}" cy="${y}" r="7.4" fill="${el.c}" stroke="rgba(0,0,0,.3)" stroke-width=".6"/><text x="${x}" y="${y}" fill="${el.t}" font-size="6" font-weight="800" font-family="Orbitron,sans-serif" text-anchor="middle" dominant-baseline="central" style="pointer-events:none">${e}</text>`:
+   `<circle cx="${x}" cy="${y}" r="7.4" fill="rgba(2,13,11,.7)" stroke="${hot?"#fff":"#2cf07a"}" stroke-width="${hot?1.4:.8}" stroke-dasharray="2 1.6"/><text x="${x}" y="${y}" fill="#78b8a0" font-size="5.4" font-weight="700" font-family="Orbitron,sans-serif" text-anchor="middle" dominant-baseline="central" style="pointer-events:none">${e}</text>`)+`<text x="${x}" y="${y+10.8}" fill="${bFill[k]?"#d8fff0":"#78b8a0"}" font-size="3.4" font-family="Share Tech Mono,monospace" text-anchor="middle" dominant-baseline="central" style="pointer-events:none">${el.n}</text></g>`;
+ });
+ $("bSvg").innerHTML=s;
+}
+function drawTray(){
+ const need=[],cnt={},left={};
+ BP[bi].forEach(([e],k)=>{if(!need.includes(e))need.push(e);cnt[e]=(cnt[e]||0)+1;left[e]=(left[e]||0)+(bFill[k]?0:1)});
+ const dec=["O","H","C","N","Cl","Na"].filter(e=>!need.includes(e)).slice(0,2);
+ $("bTray").innerHTML=need.concat(dec).map(e=>{const n=left[e]===undefined,off=!n&&left[e]==0;
+  return `<div class="bt${off?" off":""}" data-e="${e}"><i style="background:${E[e].c};color:${E[e].t}">${e}</i><small style="display:block;color:var(--ink);font-size:.8rem">${E[e].n}</small><small style="display:block">${n?"spare":left[e]+" left"}</small></div>`}).join("");
+ const done=bFill.filter(Boolean).length,tot=BP[bi].length;
+ $("bFill").style.width=done/tot*100+"%";$("bSvg").style.setProperty("--lv",done/tot);$("bCount").textContent=done+"/"+tot+" atoms placed";
+}
+function openBuild(i){
+ bi=i;bFill=BP[i].map(()=>false);bDone=false;bHot=-1;$("bSvg").classList.toggle("glt",!!PARTS[i].glitchy);
+ $("bTitle").textContent=PARTS[i].n;$("bDesc").textContent=PARTS[i].d;$("bMsg").textContent="";
+ $("build").hidden=false;drawSlots();drawTray();
+}
+function bNear(e){
+ const p=pt(e,$("bSvg"));let best=-1,bd=1e9;
+ BP[bi].forEach(([el,x,y],k)=>{if(bFill[k])return;const d=Math.hypot(p.x-x,p.y-y);if(d<11&&d<bd){bd=d;best=k}});
+ return best;
+}
+function bMove(e){bDrag.g.style.left=e.clientX+"px";bDrag.g.style.top=e.clientY+"px";const k=bNear(e);if(k!=bHot){bHot=k;drawSlots()}}
+$("bTray").addEventListener("pointerdown",e=>{
+ const t=e.target.closest(".bt");if(!t||t.classList.contains("off")||bDone||fabBusy)return;e.preventDefault();
+ const el=E[t.dataset.e],g=document.createElement("div");
+ g.style.cssText="position:fixed;z-index:600;pointer-events:none;width:3.6rem;height:3.6rem;border-radius:50%;background:"+el.c+";color:"+el.t+";font:800 1.3rem Orbitron,sans-serif;text-align:center;line-height:3.6rem;transform:translate(-50%,-50%);box-shadow:0 6px 16px rgba(0,0,0,.45)";
+ g.textContent=t.dataset.e;document.body.appendChild(g);SFX.pick();bDrag={e:t.dataset.e,g};bDrags.set(e.pointerId,bDrag);bMove(e);
+});
+addEventListener("pointermove",e=>{const d=bDrags.get(e.pointerId);if(d){bDrag=d;bMove(e)}});
+addEventListener("pointerup",e=>{
+ const d0=bDrags.get(e.pointerId);if(!d0)return;bDrags.delete(e.pointerId);bDrag=d0;bDrag.g.remove();
+ const k=bNear(e),el=bDrag.e;bDrag=null;bHot=-1;
+ if(k>-1){
+  if(BP[bi][k][0]==el){bFill[k]=true;SFX.snap();bPlaced=true;$("bMsg").textContent=""}
+  else SFX.wrong(),$("bMsg").innerHTML=`<span style="color:var(--warn)">That slot needs ${BP[bi][k][0]}, not ${el}. Try another slot!</span>`;
+ }
+ drawSlots();drawTray();
+ if(bPlaced){bPlaced=false;if(PARTS[bi].glitchy)memGlitch()}
+ if(bFill.every(Boolean)&&!bDone){
+  bDone=true;SFX.ok();$("bMsg").innerHTML=`<span style="color:var(--ok)">✓ All atoms in place! Starting fabrication…</span>`;
+  setTimeout(()=>askSand(()=>{mCur=bi;afterFab=()=>{$("build").hidden=true;showHist(false)};runFab()},bi),700);
+ }
+});
+addEventListener("pointercancel",e=>{const d=bDrags.get(e.pointerId);if(d){d.g.remove();bDrags.delete(e.pointerId);bHot=-1;if(bi>-1)drawSlots()}});
+$("bSvg").addEventListener("pointerdown",e=>{
+ const s=e.target.closest(".slot");if(!s||bDone)return;const k=+s.dataset.k;
+ if(bFill[k]){bFill[k]=false;SFX.click();$("bMsg").textContent="";drawSlots();drawTray()}
+});
+$("bBack").onclick=()=>{if(!fabBusy)$("build").hidden=true};
+let mPrev=0,mPrevPart=-1;
+const SFX=(()=>{
+ let ctx=null,muted=false;
+ try{muted=localStorage.getItem("orbMute")==="1"}catch(_){}
+ const get=()=>{if(!ctx){try{ctx=new (window.AudioContext||window.webkitAudioContext)()}catch(_){return null}}if(ctx.state==="suspended")ctx.resume();return ctx};
+ function tone(f,d=.12,type="sine",v=.15,at=0,to){
+  if(muted)return;const c=get();if(!c)return;
+  const t=c.currentTime+at,o=c.createOscillator(),g=c.createGain();
+  o.type=type;o.frequency.setValueAtTime(f,t);if(to)o.frequency.exponentialRampToValueAtTime(to,t+d);
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+d);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+d+.03);
+ }
+ return{
+  get muted(){return muted},
+  toggle(){muted=!muted;try{localStorage.setItem("orbMute",muted?"1":"0")}catch(_){}return muted},
+  unlock(){get()},
+  click(){tone(660,.06,"square",.05)},
+  pick(){tone(440,.08,"triangle",.1,0,660)},
+  bond(){tone(330,.1,"sine",.15);tone(495,.12,"sine",.15,.07);tone(660,.2,"sine",.15,.14)},
+  del(){tone(300,.18,"sawtooth",.07,0,90)},
+  snap(){tone(520,.07,"square",.06);tone(780,.12,"sine",.14,.05)},
+  wrong(){tone(160,.22,"sawtooth",.09,0,110);tone(150,.22,"sawtooth",.09,.12,100)},
+  fail(){[220,185,147,110].forEach((f,k)=>tone(f,.3,"sawtooth",.1,k*.2))},
+  win(){[659,880,1319].forEach((f,k)=>tone(f,.4,"sine",.08,k*.14))},
+  glitch(){for(let k=0;k<6;k++)tone(80+Math.random()*900,.04,"square",.04,k*.035)},
+  proton(z){tone(220*Math.pow(2,(z%24)/12),.14,"triangle",.14)},
+  pop(){tone(700,.1,"sine",.15,0,1100)},
+  tick(i){tone(300+i*70,.12,"square",.06)},
+  ping(){tone(880,.1,"sine",.14);tone(1320,.18,"sine",.12,.08)},
+  ok(){[523,659,784].forEach((f,k)=>tone(f,.15,"sine",.14,k*.09))},
+  done(){[523,659,784,1047].forEach((f,k)=>tone(f,.28,"triangle",.16,k*.14));tone(1319,.6,"sine",.14,.6)},
+  start(){[262,392,523,784].forEach((f,k)=>tone(f,.3,"sawtooth",.05,k*.12))}
+ };
+})();
+const PITCH=.55,GAIN=2.4;
+const AUD=(()=>{
+ let ctx=null,nb=null;
+ const get=()=>{if(!ctx){try{ctx=new (window.AudioContext||window.webkitAudioContext)()}catch(_){return null}}if(ctx.state==="suspended")ctx.resume();return ctx};
+ function tone(f,d=.08,type="square",v=.07,at=0,to,lp,raw){if(!raw){f=Math.max(45,f*PITCH);if(to)to=Math.max(25,to*PITCH);v=Math.min(.9,v*GAIN)}
+  if(SFX.muted)return;const c=get();if(!c)return;
+  const t=c.currentTime+at,o=c.createOscillator(),g=c.createGain();
+  o.type=type;o.frequency.setValueAtTime(f,t);if(to)o.frequency.exponentialRampToValueAtTime(to,t+d);
+  g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);
+  let out=g;if(lp){const b=c.createBiquadFilter();b.type="lowpass";b.frequency.value=lp;g.connect(b);out=b}
+  o.connect(g);out.connect(c.destination);o.start(t);o.stop(t+d+.02);
+ }
+ function noise(d=.08,v=.08,at=0,f=3000,q=1,raw){if(!raw){f*=.6;v=Math.min(.9,v*GAIN)}
+  if(SFX.muted)return;const c=get();if(!c)return;
+  if(!nb){nb=c.createBuffer(1,c.sampleRate,c.sampleRate);const a=nb.getChannelData(0);for(let i=0;i<a.length;i++)a[i]=Math.random()*2-1}
+  const t=c.currentTime+at,s=c.createBufferSource(),b=c.createBiquadFilter(),g=c.createGain();
+  s.buffer=nb;s.loop=true;b.type="bandpass";b.frequency.value=f;b.Q.value=q;g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);
+  s.connect(b);b.connect(g);g.connect(c.destination);s.start(t);s.stop(t+d+.02);
+ }
+ return{tone,noise,unlock:get};
+})();
+Object.assign(SFX,{
+ click(){AUD.tone(1800,.03,"square",.035)},
+ pick(){AUD.tone(900,.05,"square",.05,0,1800)},
+ bond(){[880,1320,1760,2640].forEach((f,k)=>AUD.tone(f,.04,"square",.045,k*.045));AUD.tone(110,.2,"sawtooth",.05,0,220,600)},
+ del(){AUD.tone(600,.22,"sawtooth",.05,0,80,1200);AUD.noise(.15,.06,0,1500)},
+ snap(){AUD.noise(.04,.1,0,5000,2);AUD.tone(1500,.05,"square",.05);AUD.tone(2200,.05,"square",.04,.05)},
+ wrong(){AUD.tone(110,.3,"sawtooth",.08);AUD.tone(116,.3,"sawtooth",.08);AUD.tone(440,.06,"square",.05);AUD.tone(330,.08,"square",.05,.08)},
+ fail(){[0,.28,.56].forEach(a=>{AUD.tone(520,.22,"square",.06,a,130);AUD.noise(.14,.05,a,1200)})},
+ proton(z){const f=180*Math.pow(2,(z%24)/12);AUD.tone(f,.06,"square",.05);AUD.tone(f*2,.03,"square",.03,.05)},
+ pop(){AUD.tone(1500,.05,"square",.05,0,3000)},
+ tick(i){AUD.tone(700+i*90,.035,"square",.05);AUD.noise(.02,.03,0,6000,3)},
+ ping(){AUD.tone(1500,.05,"square",.05);AUD.tone(2000,.07,"square",.05,.07)},
+ ok(){[660,990,1320].forEach((f,k)=>AUD.tone(f,.05,"square",.05,k*.06))},
+ done(){[440,660,880,1320,1760].forEach((f,k)=>AUD.tone(f,.06,"square",.045,k*.07));AUD.tone(55,.5,"sawtooth",.06,0,110,400)},
+ win(){AUD.tone(300,.5,"sawtooth",.04,0,1200,2000);AUD.noise(.3,.03,0,4000);AUD.tone(1760,.06,"square",.04,.45);AUD.tone(2640,.08,"square",.04,.52)},
+ glitch(){AUD.noise(.12,.08,0,800+Math.random()*3000,3);for(let k=0;k<4;k++)AUD.tone(200+Math.random()*2500,.025,"square",.04,k*.03)},
+ start(){AUD.tone(80,.6,"sawtooth",.05,0,400,800);[0,.12,.24,.36].forEach((a,i)=>AUD.tone(900+i*300,.05,"square",.04,.5+a))},
+ scare(){AUD.noise(1.2,.22,0,2500,.7);AUD.tone(180,1.1,"sawtooth",.14,0,1400,3000);AUD.tone(190,1.1,"sawtooth",.12,0,1500,3000);AUD.tone(60,.4,"square",.2,0,40)},
+ powerdown(){AUD.tone(400,.7,"sawtooth",.1,0,30,600);AUD.noise(.5,.08,0,300,1)}
+});
+const scTouch=new Set();let scBusy=false;
+function scShow(){}
+function scReset(){
+ if(scBusy)return;
+ scTouch.clear();$("scN").textContent="HOLD";$("scSm").textContent="TO SCAN";$("scTag").textContent="Press and hold the circle";
+ $("scRes").hidden=true;$("scDisc").classList.remove("scanning");$("scCirc").style.strokeDashoffset=289;
+}
+function decode(el,text,ms){
+ const cs="#%&@$*<>/|01?!",t0=performance.now();
+ (function f(now){const q=Math.min(1,(now-t0)/ms);el.textContent=text.split("").map((c,i)=>i<q*text.length?c:cs[Math.random()*cs.length|0]).join("");if(q<1)requestAnimationFrame(f)})(t0);
+}
+function scStart(){
+ scBusy=true;$("scDisc").classList.add("scanning");$("scTag").textContent="Scanning…";$("scSm").textContent="SCANNING";SFX.pop();
+ const T=4500,t0=performance.now(),circ=$("scCirc");
+ (function f(now){
+  const q=Math.min(1,(now-t0)/T);
+  circ.style.strokeDashoffset=289*(1-q);$("scN").textContent=Math.round(q*100)+"%";
+  if(Math.random()<.1)AUD.tone(1200+q*1800,.03,"square",.03);
+  if(q<1)requestAnimationFrame(f);else scDone();
+ })(t0);
+}
+function scDone(){
+ $("scDisc").classList.remove("scanning");$("scN").textContent="OK";$("scSm").textContent="IDENTIFIED";$("scTag").textContent="ALCOHOL";
+ SFX.done();$("scRes").hidden=false;decode($("scName"),"ALCOHOL",900);
+ scBusy=false;scTouch.clear();
+}
+if($("scDisc"))$("scDisc").addEventListener("pointerdown",e=>{
+ e.preventDefault();let id=e.pointerId;
+ if(e.pointerType==="mouse"){id="m"+Date.now();setTimeout(()=>{scTouch.delete(id);scShow()},1500)}
+ if(!scBusy)scHoldStart(e.pointerId);
+});
+["pointerup","pointercancel"].forEach(n=>addEventListener(n,e=>{scHoldStop(e.pointerId)}));
+if($("scClose"))$("scClose").onclick=()=>{$("scRes").hidden=true;scReset()};
+Object.assign(SFX,{
+ scare(){AUD.noise(1.6,.3,0,900,.6,true);AUD.tone(220,1.5,"sawtooth",.22,0,1100,2500,true);AUD.tone(233,1.5,"sawtooth",.2,0,1200,2500,true);AUD.tone(500,.9,"square",.1,.05,1500,3000,true);AUD.tone(60,.9,"square",.4,0,28,400,true)},
+ powerdown(){AUD.tone(380,1.1,"sawtooth",.3,0,30,1000,true);AUD.noise(.8,.3,0,250,1,true)},
+ crashStatic(){AUD.noise(9.5,.22,.1,700,.4,true)},
+ alarm(){[0,.45,.9,1.35,3.2,3.65,6.4,6.85].forEach(a=>{AUD.tone(330,.4,"square",.22,a,165,1200,true);AUD.tone(247,.4,"sawtooth",.15,a,124,1200,true)})},
+ errBeep(i){AUD.tone(150,.14,"square",.3,0,75,900,true);AUD.noise(.08,.2,0,400,2,true)},
+ bootBeep(i){AUD.tone(220+i*50,.09,"square",.25,0,380+i*50,1600,true)},
+ bootDone(){[220,330,440,660].forEach((f,k)=>AUD.tone(f,.12,"square",.28,k*.09,undefined,1800,true));AUD.tone(60,.7,"sawtooth",.25,0,120,500,true)}
+});
+let scHoldId=null,scHoldRaf=0;
+function scHoldStart(id){
+ if(scHoldId!==null)return;scHoldId=id;
+ const t0=performance.now(),circ=$("scCirc"),T=1500;
+ $("scSm").textContent="HOLDING";
+ (function f(now){
+  if(scHoldId!==id)return;
+  const q=Math.min(1,(now-t0)/T);circ.style.strokeDashoffset=289*(1-q);$("scN").textContent=Math.round(q*100)+"%";
+  if(q<1)scHoldRaf=requestAnimationFrame(f);else{scHoldId=null;scStart()}
+ })(t0);
+}
+function scHoldStop(id){
+ if(scHoldId!==id)return;scHoldId=null;cancelAnimationFrame(scHoldRaf);
+ if(!scBusy){$("scCirc").style.strokeDashoffset=289;$("scN").textContent="HOLD";$("scSm").textContent="TO SCAN"}
+}
+if($("scDisc"))$("scDisc").addEventListener("contextmenu",e=>e.preventDefault());
+let stRaf=0;
+function staticOn(){
+ const cv=$("cStatic"),x=cv.getContext("2d");cv.width=200;cv.height=112;const id=x.createImageData(200,112);
+ (function f(){for(let i=0;i<id.data.length;i+=4){const v=Math.random()*255|0;id.data[i]=id.data[i+1]=id.data[i+2]=v;id.data[i+3]=255}x.putImageData(id,0,0);stRaf=requestAnimationFrame(f)})();
+}
+function typeLines(el,lines,gap,beep){
+ lines.forEach((l,i)=>setTimeout(()=>{const d=document.createElement("div");d.textContent=l;el.appendChild(d);if(beep===2)SFX.errBeep(i);else if(beep)SFX.bootBeep(i)},i*gap));
+}
+function crashSequence(){
+ const c=$("crash"),f=$("fig"),t=$("cTxt"),st=$("cStatic");
+ t.className="";t.innerHTML="";st.style.display="none";
+ c.classList.add("on","scare");f.classList.add("on");SFX.scare();glitchFx(c,3);
+ setTimeout(()=>glitchFx(c,3),400);setTimeout(()=>glitchFx(c,3),900);
+ setTimeout(()=>{f.classList.remove("on");c.classList.remove("scare");SFX.powerdown();SFX.crashStatic();SFX.alarm();st.style.display="block";staticOn();
+  typeLines(t,["*** FATAL SYSTEM ERROR ***","0xDEAD0017  MEMORY_CONTROLLER_FAULT","kernel panic - not syncing: corrupted memory cell at 0x7F3A","memory cell owner: YARA","dumping memory ........ FAILED","user YARA did not log out","connection to fabricator lost"],800,2)},1500);
+ setTimeout(()=>{cancelAnimationFrame(stRaf);st.style.display="none";t.innerHTML=""},10500);
+ setTimeout(()=>{t.className="rb";typeLines(t,["> power cycle","> memory check ........ ok","> reloading sand injector ... ok","> restoring fabricator ... ok","> WARNING: unidentified presence found in memory","> presence matches profile: YARA","> system online. Yara is still here."],1100,true)},11700);
+ setTimeout(()=>SFX.bootDone(),18300);
+ setTimeout(()=>{c.classList.remove("on");["hist","instr","build","win","sandPop","fab"].forEach(id=>$(id).hidden=true);mMsg="";sand();render();goHome()},22300);
+}
+addEventListener("pointerdown",()=>{SFX.unlock();AUD.unlock()});
+document.addEventListener("click",e=>{if(e.target.closest("#goStart"))SFX.start();else if(e.target.closest(".btn:not(:disabled)"))SFX.click()});
+$("muteBtn").onclick=()=>{const m=SFX.toggle();$("muteBtn").textContent=m?"Sound off":"Sound on"};
+$("muteBtn").textContent=SFX.muted?"Sound off":"Sound on";
+const VIAL=["yellow","purple","red","yellow","red","purple","yellow","purple"],VCOL={yellow:"#facc15",red:"#ef4444",purple:"#a855f7"};
+function askSand(cb,vi){
+ askSandBase(cb,vi);
+ const box=document.querySelector("#sandPop .fbox"),g=!!PARTS[vi].glitchy;
+ box.classList.toggle("gl",g);
+ if(!g)return;
+ const tt=$("sandTitle"),tm=$("sandMsg");
+ tt.innerHTML='Dispense sand from <span style="color:#facc15">ALL</span> <span style="color:#ef4444">THREE</span> <span style="color:#a855f7">VIALS</span>';
+ tm.textContent="Your blueprint is complete. Pour the yellow, red and purple vials into the fabricator, one after another, then press Continue.";
+ document.querySelectorAll("#vials .vial").forEach(v=>v.classList.add("on"));
+ const tg=setInterval(()=>{
+  if($("sandPop").hasAttribute("hidden")){clearInterval(tg);return}
+  glitchFx($("sandPop"),1.2+Math.random());
+  const h=tt.innerHTML,m=tm.textContent;
+  tt.textContent=corrupt(tt.textContent,.25);tm.textContent=corrupt(m,.18);
+  setTimeout(()=>{tt.innerHTML=h;tm.textContent=m},350);
+ },1100);
+}
+function askSandBase(cb,vi){
+ const col=VIAL[vi],hex=VCOL[col];
+ $("sandTitle").innerHTML='Dispense a <span style="color:'+hex+'">'+col.toUpperCase()+'</span> vial of sand';
+ $("sandMsg").textContent="Your blueprint is complete. Take the "+col+" vial, pour its sand into the fabricator, then press Continue.";
+ $("vials").innerHTML=["yellow","red","purple"].map(c=>`<div class="vial${c==col?" on":""}"><svg viewBox="0 0 40 70"><rect x="12" y="2" width="16" height="9" rx="2" fill="#78b8a0"/><path d="M13 11H27V58Q27 66 20 66Q13 66 13 58Z" fill="rgba(216,255,240,.08)" stroke="#d8fff0" stroke-width="2"/><path d="M14 30H26V58Q26 64 20 64Q14 64 14 58Z" fill="${VCOL[c]}"/></svg>${c}</div>`).join("");
+ const b=$("sandGo");let n=8;$("sandPop").hidden=false;b.disabled=true;b.textContent="Continue in "+n+"…";
+ const t=setInterval(()=>{n--;if(n>0)b.textContent="Continue in "+n+"…";else{clearInterval(t);b.disabled=false;b.textContent="Continue";SFX.ping()}},1000);
+ b.onclick=()=>{if(b.disabled)return;$("sandPop").hidden=true;cb()};
+}
+function fabReset(){
+ document.querySelector("#fab .fbox").classList.remove("err");
+ $("fFill").style.background="";$("fFill").style.boxShadow="";$("fPct").style.color="";$("fTitle").style.color="";$("fIcon").style.filter="";$("fErr").hidden=true;
+}
+function fabError(p){
+ SFX.fail();
+ document.querySelector("#fab .fbox").classList.add("err");
+ $("fFill").style.width="62%";$("fFill").style.background="#ff4d5e";$("fFill").style.boxShadow="0 0 16px rgba(255,77,94,.8)";
+ $("fPct").textContent="62% · FAILED";$("fPct").style.color="#ff4d5e";
+ $("fTitle").textContent="Fabrication error";$("fTitle").style.color="#ff4d5e";
+ $("fStage").innerHTML='<span style="color:#ff8a94">'+p.fail+'</span>';
+ $("fIcon").style.filter="grayscale(1)";
+ $("fErr").textContent=$("build").hidden?"Return":"Return to history";$("fErr").hidden=false;
+}
+$("fErr").onclick=()=>{const inBuild=!$("build").hidden;$("fab").hidden=true;fabBusy=false;afterFab=null;if(inBuild){$("build").hidden=true;showHist(false)}};
+let winCb=null,confAnim=0;
+function confetti(n){
+ const c=$("conf"),x=c.getContext("2d");c.width=innerWidth;c.height=innerHeight;
+ const cols=["#2cf07a","#1fd1b0","#e8fff3","#facc15","#ff4d8d"];
+ const ps=Array.from({length:n},()=>{const l=Math.random()<.5;return{x:innerWidth*(l?.08:.92),y:innerHeight*.92,vx:(l?1:-1)*(4+Math.random()*10),vy:-(10+Math.random()*16),s:6+Math.random()*9,r:Math.random()*6,vr:(Math.random()-.5)*.4,c:cols[Math.random()*cols.length|0]}});
+ const t0=performance.now();cancelAnimationFrame(confAnim);
+ (function f(now){
+  x.clearRect(0,0,c.width,c.height);let alive=0;
+  ps.forEach(p=>{p.vy+=.35;p.x+=p.vx;p.y+=p.vy;p.vx*=.99;p.r+=p.vr;if(p.y<c.height+20){alive++;x.save();x.translate(p.x,p.y);x.rotate(p.r);x.fillStyle=p.c;x.fillRect(-p.s/2,-p.s/4,p.s,p.s/2);x.restore()}});
+  if(alive&&now-t0<7000)confAnim=requestAnimationFrame(f);else x.clearRect(0,0,c.width,c.height);
+ })(t0);
+}
+function showSuccess(p,cb){
+ winCb=cb;const n=mDone.size,all=false,i=PARTS.indexOf(p),left=PARTS.length-n;
+ $("wPic").innerHTML=pic(i);
+ $("wTag").textContent=all?"Mission complete":"Fabrication successful";
+ $("wTitle").innerHTML=all?'ROBOT <span>ONLINE</span>':p.n+' <span>BUILT</span>';
+ $("wSub").textContent=all?"All 7 parts are fabricated and your robot is fully assembled. Nice work, engineer!":p.n+" passed every check. It is ready to install as a replacement part.";
+ $("wCount").textContent=new Set(HIST.filter(h=>h.n!=="Robot assembled").map(h=>h.n)).size+"/"+PARTS.length;$("wTotal").textContent=HIST.filter(h=>h.n!=="Robot assembled").length;
+ $("wHist").textContent=cb?"Back to history":"Continue";
+ $("win").hidden=false;SFX.win();sparkle();
+}
+function closeWin(){cancelAnimationFrame(confAnim);$("conf").getContext("2d").clearRect(0,0,9999,9999);$("win").hidden=true}
+$("wHist").onclick=()=>{closeWin();const f=winCb;winCb=null;if(f)f()};
+$("wLab").onclick=()=>{closeWin();winCb=null;["build","hist"].forEach(id=>$(id).hidden=true);bootLab()};
+function sparkle(){
+ const c=$("conf"),x=c.getContext("2d");c.width=innerWidth;c.height=innerHeight;
+ const cx=innerWidth/2,cy=innerHeight*.38,T=3200,t0=performance.now();
+ const ps=Array.from({length:28},()=>({x:cx+(Math.random()-.5)*innerWidth*.5,y:cy+Math.random()*innerHeight*.4,vy:-(.3+Math.random()*.6),s:1.5+Math.random()*2.5,d:Math.random()*1200,c:Math.random()<.7?"44,240,122":"232,255,243"}));
+ cancelAnimationFrame(confAnim);
+ (function f(now){
+  const t=now-t0;x.clearRect(0,0,c.width,c.height);
+  for(let k=0;k<2;k++){const u=(t-k*500)/2200;if(u>0&&u<1){x.strokeStyle="rgba(44,240,122,"+(.35*(1-u))+")";x.lineWidth=2;x.beginPath();x.arc(cx,cy,60+u*innerHeight*.3,0,6.283);x.stroke()}}
+  ps.forEach(p=>{const u=(t-p.d)/2000;if(u<0||u>1)return;p.y+=p.vy;x.fillStyle="rgba("+p.c+","+(Math.sin(u*3.14159)*.8)+")";x.beginPath();x.arc(p.x,p.y,p.s,0,6.283);x.fill()});
+  if(t<T+1500)confAnim=requestAnimationFrame(f);else x.clearRect(0,0,c.width,c.height);
+ })(t0);
+}
+function showSil(){
+ const s=$("sil");if(s.classList.contains("on"))return;
+ s.style.left=(5+Math.random()*75)+"%";s.style.scale=Math.random()<.5?"-1 1":"1 1";
+ s.classList.add("on");
+ setTimeout(()=>s.classList.remove("on"),500+Math.random()*900);
+}
+function corrupt(s,p){const cs="#%&@$*<>/|01?!";return s.split("").map(c=>c!==" "&&Math.random()<p?cs[Math.random()*cs.length|0]:c).join("")}
+function memGlitch(){
+ const n=bFill.filter(Boolean).length,lv=n/BP[bi].length,pw=.8+lv*2.2;
+ glitchFx($("build"),pw);
+ if(Math.random()<.4+lv*.5)setTimeout(()=>glitchFx($("build"),pw),350);
+ if(lv>.5&&Math.random()<lv)setTimeout(()=>glitchFx($("build"),pw),700);
+ const els=[$("bTitle"),$("bDesc"),$("bCount")],orig=els.map(e=>e.textContent);
+ els.forEach((e,i)=>e.textContent=corrupt(orig[i],.08+lv*.3));
+ setTimeout(()=>els.forEach((e,i)=>e.textContent=orig[i]),450);
+}
+function glitchFab(p){
+ const box=document.querySelector("#fab .fbox");box.classList.add("gl");
+ const cs="#%&@$*<>/|01?!";
+ const cor=s=>s.split("").map(c=>c!==" "&&Math.random()<.22?cs[Math.random()*cs.length|0]:c).join("");
+ const steps=[[0,"Warming up the lab…"],[14,"Gathering atoms…"],[9,"Gathering atoms…"],[31,"Forming bonds…"],[27,"Forming bonds…"],[52,"Writing memory cells…"],[40,"Re-reading memory cells…"],[66,"Assembling the part…"],[58,"Assembling the part…"],[88,"Final quality check…"],[97,"Final quality check…"],[100,"Final quality check…"]];
+ let i=0;
+ (function go(){
+  const q=steps[i][0],f=q/100;
+  $("fFill").style.width=q+"%";$("fPct").textContent=Math.random()<.35?cor(q+"%"):q+"%";$("fStage").textContent=Math.random()<.6?cor(steps[i][1]):steps[i][1];
+  const ic=$("fIcon").style;ic.opacity=.25+.75*f;ic.filter="blur("+(1-f)*10+"px) grayscale("+(1-f)+")";ic.transform="scale("+(.6+.4*f)+")";
+  if(Math.random()<.75)glitchFx($("fab"));else SFX.glitch();
+  i++;
+  if(i<steps.length)setTimeout(go,150+Math.random()*450);
+  else setTimeout(()=>{box.classList.remove("gl");$("fPct").textContent="100%";$("fStage").textContent="Final quality check…";finishFab()},500);
+ })();
+}
+function glitchFx(el,pw=1){
+ const g=document.createElement("span");g.className="gfx";
+ const cols=["rgba(0,255,230,.35)","rgba(255,0,110,.3)","rgba(44,240,122,.4)"];
+ for(let k=0;k<Math.round(9*pw);k++){const b=document.createElement("i");
+  b.style.cssText="top:"+(Math.random()*95)+"%;height:"+(.5+Math.random()*5)+"%;background:"+cols[k%3]+";--x:"+((Math.random()-.5)*60*pw)+"px;animation-delay:"+(Math.random()*.25)+"s";g.appendChild(b)}
+ el.appendChild(g);setTimeout(()=>g.remove(),800);
+ [[0,-10,70],[70,8,-50],[150,-4,0],[220,0,0]].forEach(([t,x,h])=>setTimeout(()=>{el.style.transform=x?"translateX("+x*pw+"px)":"";el.style.filter=h?"hue-rotate("+h+"deg) saturate(2)":""},t));
+ SFX.glitch();if(Math.random()<.15*pw)showSil();
+}
+function stagger(el){
+ let i=0;
+ el.querySelectorAll(":scope>:is(svg,div,button):not(.fbox):not(.hbox):not(.bwrap):not(.ibox), :is(.fbox,.bside,.itext)>*, .hbox>:not(.hgrid), .bwrap>#bSvg").forEach(c=>c.style.setProperty("--i",i++));
+}
+function bootLab(){
+ const b=document.body;b.classList.remove("boot");void b.offsetWidth;b.classList.add("boot");
+ setTimeout(()=>b.classList.remove("boot"),1800);
+}
+function lockStart(){const b=$("goStart");b.style.pointerEvents="none";setTimeout(()=>{b.style.pointerEvents=""},2500)}
+document.querySelectorAll(".screen,#fab").forEach(el=>{
+ let tm=0;
+ Object.defineProperty(el,"hidden",{configurable:true,
+  get(){return el.hasAttribute("hidden")},
+  set(v){
+   clearTimeout(tm);
+   if(v){if(el.hasAttribute("hidden"))return;el.classList.add("out");tm=setTimeout(()=>{el.setAttribute("hidden","");el.classList.remove("out")},300)}
+   else{el.classList.remove("out");if(el.hasAttribute("hidden")){stagger(el);el.removeAttribute("hidden");if(Math.random()<.3)glitchFx(el)}}
+  }});
+});
+stagger($("start"));lockStart();
+setInterval(()=>{
+ if($("hist").hasAttribute("hidden"))return;
+ document.querySelectorAll(".hcard.glt b").forEach(b=>{const o=b.dataset.t||(b.dataset.t=b.textContent);if(Math.random()<.5){b.textContent=corrupt(o,.3);setTimeout(()=>{b.textContent=o},220)}});
+},1700);
+setInterval(()=>{
+ if(bi<0||$("build").hidden||!PARTS[bi]||!PARTS[bi].glitchy||bDone)return;
+ const lv=bFill.filter(Boolean).length/BP[bi].length;
+ if(Math.random()<.1+lv*.5)glitchFx($("build"),.6+lv*1.6);
+},900);
+if(location.hash==="#touch"){
+ const td=$("tdiag"),act=new Set(),upd=()=>{td.textContent="Touch points reported by this device: "+navigator.maxTouchPoints+" · fingers down right now: "+act.size};
+ td.hidden=false;upd();
+ addEventListener("pointerdown",e=>{act.add(e.pointerId);upd()});
+ ["pointerup","pointercancel"].forEach(n=>addEventListener(n,e=>{act.delete(e.pointerId);upd()}));
+}
+drawNuc();
+sand();render();
+</script>
+</body>
+</html>
